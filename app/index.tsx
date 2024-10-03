@@ -1,17 +1,20 @@
 import React from "react";
 import { View, Text, Button, StyleSheet } from "react-native";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 
 const Index: React.FC = () => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Welcome to the Barter App</Text>
-            <Link href={{ pathname: "./signIn" }}>
+            {/* <Link href={{ pathname: "./signIn" }}>
                 <Button title="Sign In" />
             </Link>
             <Link href="./signUp" style={styles.button}>
                 <Button title="Sign Up" />
-            </Link>
+            </Link> */}
+
+            <Button title="Sign In" onPress={() => router.push("/signIn")} />
+            <Button title="Sign Up" onPress={() => router.push("/signUp")} />
         </View>
     );
 };
