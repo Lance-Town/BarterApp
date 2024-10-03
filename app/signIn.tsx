@@ -27,6 +27,7 @@ const SignInScreen: React.FC = () => {
                 // Handle successful sign-in (e.g., store token, navigate, etc.)
                 console.log("Sign-in successful:", data);
                 // Navigate to the main app screen after sign-in
+                router.navigate("./home");
             } else {
                 // Handle error (e.g., show error message)
                 console.error("Sign-in error:", data.message);
