@@ -1,38 +1,36 @@
 import React from "react";
-import { View, Text, Button, StyleSheet } from "react-native";
-import { Link, router } from "expo-router";
+import { Layout, Text, Button, Divider } from "@ui-kitten/components";
+import { useRouter } from "expo-router";
 
 const Index: React.FC = () => {
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Welcome to the Barter App</Text>
-            {/* <Link href={{ pathname: "./signIn" }}>
-                <Button title="Sign In" />
-            </Link>
-            <Link href="./signUp" style={styles.button}>
-                <Button title="Sign Up" />
-            </Link> */}
+    const router = useRouter();
 
-            <Button title="Sign In" onPress={() => router.push("/signIn")} />
-            <Button title="Sign Up" onPress={() => router.push("/signUp")} />
-        </View>
+    return (
+        <Layout
+            style={{
+                flex: 1,
+                justifyContent: "center",
+                alignItems: "center",
+                padding: 16,
+            }}
+        >
+            <Text category="h1">Barter App</Text>
+            <Layout>
+                <Button
+                    style={{ marginTop: 16 }}
+                    onPress={() => router.push("/signIn")}
+                >
+                    Sign In
+                </Button>
+                <Button
+                    style={{ marginTop: 8 }}
+                    onPress={() => router.push("/signUp")}
+                >
+                    Sign Up
+                </Button>
+            </Layout>
+        </Layout>
     );
 };
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        padding: 16,
-    },
-    title: {
-        fontSize: 24,
-        marginBottom: 16,
-    },
-    button: {
-        marginTop: 8,
-    },
-});
 
 export default Index;

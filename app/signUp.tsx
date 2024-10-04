@@ -1,10 +1,18 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, Button, StyleSheet } from "react-native";
+import {
+    Layout,
+    Text,
+    Input,
+    Button,
+    StyleService,
+    useStyleSheet,
+} from "@ui-kitten/components";
 import { useRouter } from "expo-router";
 import { SERVER_IP, SERVER_PORT } from "../constants/config";
 
 const SignUpScreen: React.FC = () => {
     const router = useRouter();
+    const styles = useStyleSheet(themedStyles); // Use UI Kitten's theming
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const [confirmPassword, setConfirmPassword] = useState<string>("");
@@ -57,9 +65,9 @@ const SignUpScreen: React.FC = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <Layout style={styles.container}>
             <Text style={styles.title}>Sign Up</Text>
-            <TextInput
+            <Input
                 style={styles.input}
                 placeholder="Email"
                 value={email}
@@ -67,43 +75,48 @@ const SignUpScreen: React.FC = () => {
                 keyboardType="email-address"
                 autoCapitalize="none"
             />
-            <TextInput
+            <Input
                 style={styles.input}
                 placeholder="Password"
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
             />
-            <TextInput
+            <Input
                 style={styles.input}
                 placeholder="Confirm Password"
                 value={confirmPassword}
                 onChangeText={setConfirmPassword}
                 secureTextEntry
             />
-            <TextInput
+            <Input
                 style={styles.input}
                 placeholder="Phone Number (optional)"
                 value={phoneNumber}
                 onChangeText={setPhoneNumber}
                 keyboardType="phone-pad"
             />
-            <TextInput
+            <Input
                 style={styles.input}
                 placeholder="Address (optional)"
                 value={address}
                 onChangeText={setAddress}
             />
-            <Button title="Sign Up" onPress={handleSignUp} />
+            <Button style={styles.button} onPress={handleSignUp}>
+                Sign Up
+            </Button>
             <Button
-                title="Already have an account? Sign In"
+                style={styles.button}
+                appearance="ghost"
                 onPress={() => router.push("/signIn")}
-            />
-        </View>
+            >
+                Already have an account? Sign In
+            </Button>
+        </Layout>
     );
 };
 
-const styles = StyleSheet.create({
+const themedStyles = StyleService.create({
     container: {
         flex: 1,
         justifyContent: "center",
@@ -112,13 +125,13 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         marginBottom: 16,
+        textAlign: "center",
     },
     input: {
-        height: 40,
-        borderColor: "gray",
-        borderWidth: 1,
         marginBottom: 12,
-        paddingLeft: 8,
+    },
+    button: {
+        marginVertical: 8,
     },
 });
 
