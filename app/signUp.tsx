@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import { SERVER_IP, SERVER_PORT } from "../constants/config";
 
 const SignUpScreen: React.FC = () => {
     const router = useRouter();
@@ -23,19 +24,22 @@ const SignUpScreen: React.FC = () => {
         }
 
         try {
-            const response = await fetch("http://localhost:3000/signup", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    email,
-                    password,
-                    phone_number: phoneNumber,
-                    address,
-                    access_level: accessLevel,
-                }),
-            });
+            const response = await fetch(
+                `http://${SERVER_IP}:${SERVER_PORT}/signup`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email,
+                        password,
+                        phone_number: phoneNumber,
+                        address,
+                        access_level: accessLevel,
+                    }),
+                }
+            );
 
             const data = await response.json();
             if (response.ok) {
