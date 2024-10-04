@@ -19,10 +19,10 @@ app.use(bodyParser.json());
 
 // create connection to MySQL database
 const db = mysql.createConnection({
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    host: '50.52.98.10',
+    user: 'username',
+    password: 'password',
+    database: 'BarterDB',
 });
 
 // connect to db
@@ -96,6 +96,6 @@ app.post("/signin", (req, res) => {
 });
 
 // start the server
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
     console.log(`Server started on port ${port}`);
 });
