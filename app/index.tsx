@@ -1,16 +1,30 @@
 import React from "react";
-import { View, Button, StyleSheet } from "react-native";
+import { Image } from "react-native";
 import { Link, router } from "expo-router";
 import * as eva from '@eva-design/eva';
-import { ApplicationProvider, IconRegistry, Layout, Text } from '@ui-kitten/components';
-// import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { ApplicationProvider, IconRegistry, Layout, Text, StyleService, useStyleSheet, Button } from '@ui-kitten/components';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { default as customTheme } from './custom-theme.json'; // <-- Import app theme
 
 const Index: React.FC = () => {
+    const styles = useStyleSheet(themedStyles); // Use UI Kitten's theming
+
     return (
         <ApplicationProvider {...eva} theme={{...eva.dark, ...customTheme}}>
-            <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text>Welcome to the Barter App</Text>
+            <Layout
+                style={{
+                    flex: 1,
+                    justifyContent: "flex-start",
+                    alignItems: "center",
+                    paddingTop: 60,
+                }}
+            >
+                <Text
+                    style={styles.title}
+                    category="h3"
+                >
+                    Welcome{"\n"}to the Barter App
+                </Text>
                 {/* <Link href={{ pathname: "./signIn" }}>
                     <Button title="Sign In" />
                 </Link>
@@ -18,11 +32,64 @@ const Index: React.FC = () => {
                     <Button title="Sign Up" />
                 </Link> */}
 
-                <Button title="Sign In" onPress={() => router.push("/signIn")} />
-                <Button title="Sign Up" onPress={() => router.push("/signUp")} />
+                <Image
+                    source={require('../assets/images/logo-placeholder.png')}   //placeholder logo for now
+                    style={themedStyles.logo}
+                    resizeMode="contain"
+                />
+
+                <Layout
+                    style={{
+                        flex: 1, // Takes up remaining space
+                        justifyContent: "flex-end", // Push content to the bottom
+                        width: '100%', // Ensures buttons are aligned to full width
+                        alignItems: 'center', // Center the buttons horizontally
+                        paddingBottom: 100, // Add some space at the bottom
+                    }}
+                >
+
+                    <Button 
+                        style={styles.button}
+                        appearance="outline"
+                        onPress={() => router.push("/signIn")}
+                    > Sign In
+                    </Button>
+
+                    <Text style={{marginTop: 20}} category="s2" status="primary">
+                        not registered?
+                    </Text>
+
+                    <Button 
+                        style={styles.button}
+                        appearance="filled"
+                        onPress={() => router.push("/signUp")}
+                    > Sign Up
+                    </Button>
+                </Layout>
             </Layout>
         </ApplicationProvider>
     );
 };
+
+
+const themedStyles = StyleService.create({
+    title: {
+        margin: 20,
+        textAlign: 'center',
+    },
+    input: {
+        marginBottom: 12,
+        width: '80%',
+    },
+    button: {
+        margin: 6,
+    },
+    logo: {
+        width: 150,
+        height: 150, 
+        marginBottom: 20, 
+        marginTop: 40,
+    },
+});
 
 export default Index;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, TextInput, Button } from "react-native";
+import { Image } from "react-native";
 import { useRouter } from "expo-router";
 import * as eva from "@eva-design/eva";
 import {
@@ -9,6 +9,8 @@ import {
     Text,
     StyleService,
     useStyleSheet,
+    Input,
+    Button,
 } from "@ui-kitten/components";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { SERVER_IP, SERVER_PORT } from "../constants/config";
@@ -73,12 +75,23 @@ const SignUpScreen: React.FC = () => {
             <Layout
                 style={{
                     flex: 1,
-                    justifyContent: "center",
+                    justifyContent: "flex-start",
                     alignItems: "center",
+                    paddingTop: 60,
                 }}
             >
-                <Text style={styles.title}>Sign Up</Text>
-                <TextInput
+                <Image
+                    source={require('../assets/images/logo-placeholder.png')}   //placeholder logo for now
+                    style={themedStyles.logo}
+                    resizeMode="contain"
+                />
+
+                <Text 
+                    style={styles.title}
+                    category='h1'>
+                        Sign Up
+                </Text>
+                <Input
                     style={styles.input}
                     placeholder="Email"
                     value={email}
@@ -86,59 +99,74 @@ const SignUpScreen: React.FC = () => {
                     keyboardType="email-address"
                     autoCapitalize="none"
                 />
-                <TextInput
+                <Input
                     style={styles.input}
                     placeholder="Password"
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry
                 />
-                <TextInput
+                <Input
                     style={styles.input}
                     placeholder="Confirm Password"
                     value={confirmPassword}
                     onChangeText={setConfirmPassword}
                     secureTextEntry
                 />
-                <TextInput
+                <Input
                     style={styles.input}
                     placeholder="Phone Number (optional)"
                     value={phoneNumber}
                     onChangeText={setPhoneNumber}
                     keyboardType="phone-pad"
                 />
-                <TextInput
+                <Input
                     style={styles.input}
                     placeholder="Address (optional)"
                     value={address}
                     onChangeText={setAddress}
                 />
-                <Button title="Sign Up" onPress={handleSignUp} />
                 <Button
-                    title="Already have an account? Sign In"
+                     style={styles.button}
+                     appearance="filled"
+                     onPress={handleSignUp}
+                >
+                    Sign Up
+                </Button>
+
+                <Text style={{marginTop: 6}} category="s2" status="primary">
+                    Already have an account?
+                </Text>
+
+                <Button
+                    style={styles.button}
+                    appearance="outline"
+                    size="medium"
                     onPress={() => router.push("/signIn")}
-                />
+                >
+                    Sign In
+                </Button>
             </Layout>
         </ApplicationProvider>
     );
 };
 
 const themedStyles = StyleService.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        padding: 16,
-    },
     title: {
-        fontSize: 24,
-        marginBottom: 16,
-        textAlign: "center",
+        margin: 20,
     },
     input: {
         marginBottom: 12,
+        width: '80%',
     },
     button: {
-        marginVertical: 8,
+        margin: 6,
+    },
+    logo: {
+        width: 150,
+        height: 150, 
+        marginBottom: 20, 
+        marginTop: 40,
     },
 });
 

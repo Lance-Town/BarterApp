@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, TextInput, StyleSheet } from "react-native";
+import { Image } from "react-native";
 import { useRouter } from "expo-router";
 import * as eva from "@eva-design/eva";
 import {
@@ -8,13 +8,18 @@ import {
     Layout,
     Text,
     Button,
+    Icon,
+    Input,
+    StyleService,
+    useStyleSheet,
 } from "@ui-kitten/components";
-import { EvaIconsPack } from "@ui-kitten/eva-icons";
+import { EvaIconsPack } from "@ui-kitten/eva-icons"; // <-- Import EvaIconsPack
 import { SERVER_IP, SERVER_PORT } from "../constants/config";
 import { default as customTheme } from "./custom-theme.json"; // <-- Import app theme
 
 const SignInScreen: React.FC = () => {
     const router = useRouter();
+    const styles = useStyleSheet(themedStyles); // Use UI Kitten's theming
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
 
@@ -28,13 +33,13 @@ const SignInScreen: React.FC = () => {
             const response = await fetch(
                 `http://${SERVER_IP}:${SERVER_PORT}/signin`,
                 {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ email, password }),
-                }
-            );
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            }
+        );
 
             const data = await response.json();
             if (response.ok) {
@@ -53,12 +58,24 @@ const SignInScreen: React.FC = () => {
             <Layout
                 style={{
                     flex: 1,
-                    justifyContent: "center",
+                    justifyContent: "flex-start",
                     alignItems: "center",
+                    paddingTop: 60,
                 }}
             >
-                <Text>Sign In</Text>
-                <TextInput
+                <Image
+                    source={require('../assets/images/logo-placeholder.png')}   //placeholder logo for now
+                    style={themedStyles.logo}
+                    resizeMode="contain"
+                />
+
+
+                <Text 
+                    style={styles.title}
+                    category='h1'>
+                        Sign In
+                </Text>
+                <Input
                     style={styles.input}
                     placeholder="Email"
                     value={email}
@@ -66,7 +83,7 @@ const SignInScreen: React.FC = () => {
                     keyboardType="email-address"
                     autoCapitalize="none"
                 />
-                <TextInput
+                <Input
                     style={styles.input}
                     placeholder="Password"
                     value={password}
@@ -81,8 +98,8 @@ const SignInScreen: React.FC = () => {
                     Sign In
                 </Button>
 
-                <Text category="s2" status="primary">
-                    {"\n"}Don't have an account?
+                <Text style={{marginTop: 6}} category="s2" status="primary">
+                    Don't have an account?
                 </Text>
 
                 <Button
@@ -98,17 +115,25 @@ const SignInScreen: React.FC = () => {
     );
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: "center",
-        padding: 16,
-    },
+const themedStyles = StyleService.create({
     input: {
         marginBottom: 12,
+        width: '80%',
     },
     button: {
-        margin: 8,
+        margin: 6,
+    },
+    text: {
+        margin: 12,
+    },
+    title: {
+        margin: 20,
+    },
+    logo: {
+        width: 150,
+        height: 150, 
+        marginBottom: 20, 
+        marginTop: 40,
     },
 });
 
