@@ -1,6 +1,9 @@
 import React from "react";
-import { SafeAreaView, Text, FlatList } from "react-native";
-import { Button, Divider, Layout, TopNavigation } from "@ui-kitten/components";
+import { SafeAreaView, FlatList } from "react-native";
+import * as eva from '@eva-design/eva';
+import { Button, Divider, Layout, TopNavigation, ApplicationProvider, Text, StyleService, useStyleSheet, ButtonGroup } from "@ui-kitten/components";
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { default as customTheme } from './custom-theme.json'; // <-- Import app theme
 
 // Sample data for the top offerings
 const offerings = [
@@ -12,6 +15,8 @@ const offerings = [
 ];
 
 const HomeScreen: React.FC = () => {
+    const styles = useStyleSheet(themedStyles); // Use UI Kitten's theming
+
     const handlePostOffering = () => {
         // Logic for posting an offering
         console.log("Post Offering");
@@ -23,50 +28,77 @@ const HomeScreen: React.FC = () => {
     };
 
     return (
-        <Layout style={{ width: "100%", height: "100%" }}>
-            <SafeAreaView style={{ flex: 1 }}>
-                <TopNavigation title="BarterApp" alignment="center" />
-                <Divider />
-                <Layout
-                    style={{
-                        flex: 1,
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                >
-                    <Button onPress={handlePostOffering}>Post Offering</Button>
-                    <Button onPress={handleViewAllOfferings}>
-                        All Offerings
-                    </Button>
-                </Layout>
-                <Text
-                    style={{
-                        fontSize: 24,
-                        fontWeight: "bold",
-                        marginBottom: 10,
-                    }}
-                >
-                    Top 5 Offerings
-                </Text>
-                <FlatList
-                    data={offerings}
-                    renderItem={({ item }) => (
-                        <Layout
-                            style={{
-                                padding: 10,
-                                borderBottomWidth: 1,
-                                borderBottomColor: "#ccc",
-                                width: "100%",
-                            }}
-                        >
-                            <Text>{item.title}</Text>
+        <ApplicationProvider {...eva} theme={{...eva.dark, ...customTheme}}>
+            <Layout style={{ width: "100%", height: "100%" }}>
+                <SafeAreaView style={{ flex: 1 }}>
+                    <TopNavigation title="BarterApp" alignment="center" />
+                    <Divider />
+                    <Layout
+                        style={{
+                            flex: 1,
+                            justifyContent: "center",
+                            alignItems: "center",
+                        }}
+                    >
+                        <Layout style={styles.container} level='1'>
+                            <Button style={styles.inlineButton} appearance="outline" onPress={handlePostOffering}>
+                                Post Offering
+                            </Button>
+                            <Button style={styles.inlineButton} appearance="outline" status="success" onPress={handleViewAllOfferings}>
+                                All Offerings
+                            </Button>
                         </Layout>
-                    )}
-                    keyExtractor={(item) => item.id}
-                />
-            </SafeAreaView>
-        </Layout>
+                    </Layout>
+                    <Text
+                        style={{
+                            fontSize: 24,
+                            fontWeight: "bold",
+                            marginBottom: 10,
+                            paddingLeft: 10,
+                        }}
+                    >
+                        Top 5 Offerings
+                    </Text>
+                    <FlatList
+                        style={styles.content}
+                        data={offerings}
+                        renderItem={({ item }) => (
+                            <Layout
+                                style={{
+                                    padding: 10,
+                                    borderBottomWidth: 1,
+                                    borderBottomColor: "#ccc",
+                                    width: "100%",
+                                }}
+                            >
+                                <Text>{item.title}</Text>
+                            </Layout>
+                        )}
+                        keyExtractor={(item) => item.id}
+                    />
+                </SafeAreaView>
+            </Layout>
+        </ApplicationProvider>
     );
 };
+
+const themedStyles = StyleService.create({
+    inlineButton: {
+        margin: 6,
+    },
+    logo: {
+        width: 150,
+        height: 150, 
+        marginBottom: 20, 
+        marginTop: 40,
+    },
+    content: {
+        padding: 10,
+    },
+    container: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+      },
+});
 
 export default HomeScreen;

@@ -47,24 +47,23 @@ const Index: React.FC = () => {
                         paddingBottom: 100, // Add some space at the bottom
                     }}
                 >
+                    <Layout style={styles.container} level='1'>
+                        <Button 
+                            style={styles.button}
+                            appearance="outline"
+                            onPress={() => router.push("/signIn")}
+                        > Sign In
+                        </Button>
 
-                    <Button 
-                        style={styles.button}
-                        appearance="outline"
-                        onPress={() => router.push("/signIn")}
-                    > Sign In
-                    </Button>
+                     
 
-                    <Text style={{marginTop: 20}} category="s2" status="primary">
-                        not registered?
-                    </Text>
-
-                    <Button 
-                        style={styles.button}
-                        appearance="filled"
-                        onPress={() => router.push("/signUp")}
-                    > Sign Up
-                    </Button>
+                        <Button 
+                            style={styles.button}
+                            appearance="filled"
+                            onPress={() => router.push("/signUp")}
+                        > Sign Up
+                        </Button>
+                    </Layout>
                 </Layout>
             </Layout>
         </ApplicationProvider>
@@ -90,6 +89,10 @@ const themedStyles = StyleService.create({
         marginBottom: 20, 
         marginTop: 40,
     },
+    container: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+      },
 });
 
 export default Index;

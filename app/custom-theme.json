@@ -55,5 +55,6 @@
   "color-basic-800": "#383838",
   "color-basic-900": "#292929",
   "color-basic-1000": "#1F1F1F",
-  "color-basic-1100": "#141414"
+  "color-basic-1100": "#141414",
+  "background-basic-color-1": "#292929"
 }
