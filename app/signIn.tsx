@@ -64,7 +64,7 @@ const SignInScreen: React.FC = () => {
                 }}
             >
                 <Image
-                    source={require('../assets/images/logo-placeholder.png')}   //placeholder logo for now
+                    source={require('../assets/logo/trade4gold.png')}   //placeholder logo for now
                     style={themedStyles.logo}
                     resizeMode="contain"
                 />
@@ -130,10 +130,10 @@ const themedStyles = StyleService.create({
         margin: 20,
     },
     logo: {
-        width: 150,
-        height: 150, 
+        width: 300,
+        height: 200, 
         marginBottom: 20, 
-        marginTop: 40,
+        marginTop: 5,
     },
 });
 
