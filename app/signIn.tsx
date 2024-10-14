@@ -14,7 +14,7 @@ import {
     useStyleSheet,
 } from "@ui-kitten/components";
 import { EvaIconsPack } from "@ui-kitten/eva-icons"; // <-- Import EvaIconsPack
-import { SERVER_IP, SERVER_PORT } from "../constants/config";
+import { signInUser, SignInData } from "@/backend/api";
 import { default as customTheme } from "./custom-theme.json"; // <-- Import app theme
 
 const SignInScreen: React.FC = () => {
@@ -29,27 +29,14 @@ const SignInScreen: React.FC = () => {
             return;
         }
 
-        try {
-            const response = await fetch(
-                `http://${SERVER_IP}:${SERVER_PORT}/signin`,
-                {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ email, password }),
-            }
-        );
+        const signInData: SignInData = { email, password };
 
-            const data = await response.json();
-            if (response.ok) {
-                console.log("Sign-in successful:", data);
-                router.push("/home");
-            } else {
-                console.error("Sign-in error:", data.message);
-            }
-        } catch (error) {
-            console.error("Error:", error);
+        try {
+            const result = await signInUser(signInData);
+            console.log("Sign-in Successful", result);
+            router.push("/home");
+        } catch (error: any) {
+            alert("Sign-in failed: " + error.message);
         }
     };
 
@@ -64,16 +51,13 @@ const SignInScreen: React.FC = () => {
                 }}
             >
                 <Image
-                    source={require('../assets/images/logo-placeholder.png')}   //placeholder logo for now
+                    source={require("../assets/images/logo-placeholder.png")} //placeholder logo for now
                     style={themedStyles.logo}
                     resizeMode="contain"
                 />
 
-
-                <Text 
-                    style={styles.title}
-                    category='h1'>
-                        Sign In
+                <Text style={styles.title} category="h1">
+                    Sign In
                 </Text>
                 <Input
                     style={styles.input}
@@ -98,7 +82,7 @@ const SignInScreen: React.FC = () => {
                     Sign In
                 </Button>
 
-                <Text style={{marginTop: 6}} category="s2" status="primary">
+                <Text style={{ marginTop: 6 }} category="s2" status="primary">
                     Don't have an account?
                 </Text>
 
@@ -118,7 +102,7 @@ const SignInScreen: React.FC = () => {
 const themedStyles = StyleService.create({
     input: {
         marginBottom: 12,
-        width: '80%',
+        width: "80%",
     },
     button: {
         margin: 6,
@@ -131,8 +115,8 @@ const themedStyles = StyleService.create({
     },
     logo: {
         width: 150,
-        height: 150, 
-        marginBottom: 20, 
+        height: 150,
+        marginBottom: 20,
         marginTop: 40,
     },
 });

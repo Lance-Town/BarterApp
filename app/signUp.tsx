@@ -13,8 +13,8 @@ import {
     Button,
 } from "@ui-kitten/components";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
-import { SERVER_IP, SERVER_PORT } from "../constants/config";
 import { default as customTheme } from "./custom-theme.json"; // <-- Import app theme
+import { signUpUser, SignUpData } from "@/backend/api";
 
 const SignUpScreen: React.FC = () => {
     const router = useRouter();
@@ -27,46 +27,21 @@ const SignUpScreen: React.FC = () => {
     const accessLevel = 0;
 
     const handleSignUp = async () => {
-        if (password !== confirmPassword) {
-            alert("Passwords do not match");
-            return;
-        }
-
-        if (!email || !password) {
-            alert("Email and Password are required");
-            return;
-        }
+        const signUpData: SignUpData = {
+            email,
+            password,
+            confirmPassword,
+            phoneNumber,
+            address,
+            accessLevel,
+        };
 
         try {
-            const response = await fetch(
-                `http://${SERVER_IP}:${SERVER_PORT}/signup`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email,
-                        password,
-                        phone_number: phoneNumber,
-                        address,
-                        access_level: accessLevel,
-                    }),
-                }
-            );
-
-            const data = await response.json();
-            if (response.ok) {
-                // Handle successful sign-up (e.g., navigate to sign-in or main app screen)
-                console.log("Sign-up successful:", data);
-                router.push("/signIn"); // Navigate to sign-in screen after sign-up
-            } else {
-                // Handle error (e.g., show error message)
-                console.error("Sign-up error:", data.message);
-                alert(data.message);
-            }
+            const result = await signUpUser(signUpData);
+            console.log("Sign-up successful:", result);
+            router.push("/signIn");
         } catch (error) {
-            console.error("Error:", error);
+            alert("Sign-up failed: " + error);
         }
     };
 
@@ -81,15 +56,13 @@ const SignUpScreen: React.FC = () => {
                 }}
             >
                 <Image
-                    source={require('../assets/images/logo-placeholder.png')}   //placeholder logo for now
+                    source={require("../assets/images/logo-placeholder.png")} //placeholder logo for now
                     style={themedStyles.logo}
                     resizeMode="contain"
                 />
 
-                <Text 
-                    style={styles.title}
-                    category='h1'>
-                        Sign Up
+                <Text style={styles.title} category="h1">
+                    Sign Up
                 </Text>
                 <Input
                     style={styles.input}
@@ -127,14 +100,14 @@ const SignUpScreen: React.FC = () => {
                     onChangeText={setAddress}
                 />
                 <Button
-                     style={styles.button}
-                     appearance="filled"
-                     onPress={handleSignUp}
+                    style={styles.button}
+                    appearance="filled"
+                    onPress={handleSignUp}
                 >
                     Sign Up
                 </Button>
 
-                <Text style={{marginTop: 6}} category="s2" status="primary">
+                <Text style={{ marginTop: 6 }} category="s2" status="primary">
                     Already have an account?
                 </Text>
 
@@ -157,15 +130,15 @@ const themedStyles = StyleService.create({
     },
     input: {
         marginBottom: 12,
-        width: '80%',
+        width: "80%",
     },
     button: {
         margin: 6,
     },
     logo: {
         width: 150,
-        height: 150, 
-        marginBottom: 20, 
+        height: 150,
+        marginBottom: 20,
         marginTop: 40,
     },
 });
