@@ -5,7 +5,6 @@ import {
     Button,
     Divider,
     Layout,
-    TopNavigation,
     ApplicationProvider,
     Text,
     StyleService,
@@ -60,7 +59,6 @@ const HomeScreen: React.FC = () => {
                 >
                     <SafeAreaView style={{ flex: 1 }}>
                         <AppHeader />
-                        {/* <TopNavigation title="BarterApp" alignment="center" /> */}
                         <Divider />
                         <Layout
                             style={{
