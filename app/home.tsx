@@ -15,7 +15,7 @@ import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { fetchFiveItems, Item } from "@/backend/api";
 import { default as customTheme } from "./custom-theme.json"; // <-- Import app theme
 import { router } from "expo-router";
-import AppHeader from "@/components/Trade4Logo";
+import AppHeader from "@/components/AppHeader";
 
 const HomeScreen: React.FC = () => {
     const styles = useStyleSheet(themedStyles); // Use UI Kitten's theming
@@ -34,9 +34,9 @@ const HomeScreen: React.FC = () => {
         }
     }, []);
 
-    const handlePostOffering = () => {
+    const handlePostItem = () => {
         // Logic for posting an offering
-        router.push("/NewPost");
+        router.push("./newItem");
     };
 
     const handleViewAllOfferings = () => {
@@ -72,9 +72,9 @@ const HomeScreen: React.FC = () => {
                                 <Button
                                     style={styles.inlineButton}
                                     appearance="outline"
-                                    onPress={handlePostOffering}
+                                    onPress={handlePostItem}
                                 >
-                                    Post Offering
+                                    Post Item
                                 </Button>
                                 <Button
                                     style={styles.inlineButton}

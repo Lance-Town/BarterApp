@@ -178,6 +178,7 @@ export const fetchAllItems = async (): Promise<Item[]> => {
     }
 };
 
+// Function to fetch 5 random items from mysql db
 export const fetchFiveItems = async (): Promise<Item[]> => {
     try {
         const url = `http://${SERVER_IP}:${SERVER_PORT}/items/random`;
@@ -192,6 +193,33 @@ export const fetchFiveItems = async (): Promise<Item[]> => {
         return data;
     } catch (error) {
         console.error("Error signing in user:", error);
+        throw error;
+    }
+};
+
+// Function to post a new item
+export const addItem = async (
+    item: Omit<Item, "item_id">
+): Promise<{ message: string; item_id: number }> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/item`;
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(item),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to add item");
+        }
+
+        return data;
+    } catch (error) {
+        console.error("Error adding item:", error);
         throw error;
     }
 };
