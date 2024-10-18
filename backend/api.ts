@@ -152,10 +152,35 @@ export const signInUser = async (signInData: SignInData): Promise<any> => {
     }
 };
 
+export interface Item {
+    item_id: string;
+    name: string;
+    transfer_cost: number;
+    value: number;
+}
+
 // Function to fetch all users
-export const fetchAllItems = async (): Promise<any[]> => {
+export const fetchAllItems = async (): Promise<Item[]> => {
     try {
         const url = `http://${SERVER_IP}:${SERVER_PORT}/item`;
+        const response = await fetch(url);
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Fetching all items failed");
+        }
+
+        return data;
+    } catch (error) {
+        console.error("Error signing in user:", error);
+        throw error;
+    }
+};
+
+export const fetchFiveItems = async (): Promise<Item[]> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/items/random`;
         const response = await fetch(url);
 
         const data = await response.json();
