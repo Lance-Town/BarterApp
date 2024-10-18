@@ -16,6 +16,7 @@ import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { fetchFiveItems, Item } from "@/backend/api";
 import { default as customTheme } from "./custom-theme.json"; // <-- Import app theme
 import { router } from "expo-router";
+import AppHeader from "@/components/Trade4Logo";
 
 const HomeScreen: React.FC = () => {
     const styles = useStyleSheet(themedStyles); // Use UI Kitten's theming
@@ -58,7 +59,8 @@ const HomeScreen: React.FC = () => {
                     }}
                 >
                     <SafeAreaView style={{ flex: 1 }}>
-                        <TopNavigation title="BarterApp" alignment="center" />
+                        <AppHeader />
+                        {/* <TopNavigation title="BarterApp" alignment="center" /> */}
                         <Divider />
                         <Layout
                             style={{
