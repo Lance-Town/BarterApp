@@ -151,3 +151,22 @@ export const signInUser = async (signInData: SignInData): Promise<any> => {
         throw error;
     }
 };
+
+// Function to fetch all users
+export const fetchAllItems = async (): Promise<any[]> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/item`;
+        const response = await fetch(url);
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Fetching all items failed");
+        }
+
+        return data;
+    } catch (error) {
+        console.error("Error signing in user:", error);
+        throw error;
+    }
+};
