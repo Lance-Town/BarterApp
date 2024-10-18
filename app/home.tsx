@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView, FlatList } from "react-native";
+import { SafeAreaView, FlatList, ImageBackground } from "react-native";
 import * as eva from "@eva-design/eva";
 import {
     Button,
@@ -54,69 +54,77 @@ const HomeScreen: React.FC = () => {
 
     return (
         <ApplicationProvider {...eva} theme={{ ...eva.dark, ...customTheme }}>
-            <Layout style={{ width: "100%", height: "100%" }}>
-                <SafeAreaView style={{ flex: 1 }}>
-                    <TopNavigation title="BarterApp" alignment="center" />
-                    <Divider />
-                    <Layout
-                        style={{
-                            flex: 1,
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}
-                    >
-                        <Layout style={styles.container} level="1">
-                            <Button
-                                style={styles.inlineButton}
-                                appearance="outline"
-                                onPress={handlePostOffering}
-                            >
-                                Post Offering
-                            </Button>
-                            <Button
-                                style={styles.inlineButton}
-                                appearance="outline"
-                                status="success"
-                                onPress={handleViewAllOfferings}
-                            >
-                                All Offerings
-                            </Button>
-                        </Layout>
-                    </Layout>
-                    <Text
-                        style={{
-                            fontSize: 24,
-                            fontWeight: "bold",
-                            marginBottom: 10,
-                            paddingLeft: 10,
-                        }}
-                    >
-                        5 Random Posts
-                    </Text>
-                    <FlatList
-                        style={styles.content}
-                        data={offerings}
-                        renderItem={({ item }) => (
-                            <Layout
-                                style={{
-                                    padding: 10,
-                                    borderBottomWidth: 1,
-                                    borderBottomColor: "#ccc",
-                                    width: "100%",
-                                }}
-                            >
-                                <Text>
-                                    {`${item.name ? item.name : "ERROR"}`}
-                                </Text>
-                                <Text>
-                                    {`${item.value ? item.value : "ERROR"}`}
-                                </Text>
+            <ImageBackground
+                source={require("../assets/logo/trade4spread.png")} // Replace with your image URL or local path
+                style={themedStyles.backgroundImage}
+            >
+                <Layout
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                        backgroundColor: "transparent",
+                    }}
+                >
+                    <SafeAreaView style={{ flex: 1 }}>
+                        <TopNavigation title="BarterApp" alignment="center" />
+                        <Divider />
+                        <Layout
+                            style={{
+                                flex: 1,
+                                justifyContent: "center",
+                                alignItems: "center",
+                                backgroundColor: "transparent",
+                            }}
+                        >
+                            <Layout style={styles.container} level="1">
+                                <Button
+                                    style={styles.inlineButton}
+                                    appearance="outline"
+                                    onPress={handlePostOffering}
+                                >
+                                    Post Offering
+                                </Button>
+                                <Button
+                                    style={styles.inlineButton}
+                                    appearance="outline"
+                                    status="success"
+                                    onPress={handleViewAllOfferings}
+                                >
+                                    All Offerings
+                                </Button>
                             </Layout>
-                        )}
-                        keyExtractor={(item) => item.item_id.toString()}
-                    />
-                </SafeAreaView>
-            </Layout>
+                        </Layout>
+                        <Text
+                            style={{
+                                fontSize: 24,
+                                fontWeight: "bold",
+                                marginBottom: 10,
+                                paddingLeft: 10,
+                            }}
+                        >
+                            Top 5 Offerings
+                        </Text>
+                        <FlatList
+                            style={styles.content}
+                            data={offerings}
+                            renderItem={({ item }) => (
+                                <Layout
+                                    style={{
+                                        padding: 10,
+                                        borderBottomWidth: 1,
+                                        borderBottomColor: "#ccc",
+                                        width: "100%",
+                                        backgroundColor: "transparent",
+                                    }}
+                                >
+                                    <Text>{item.title}</Text>
+                                </Layout>
+                            )}
+                            keyExtractor={(item) => item.id}
+                        />
+                    </SafeAreaView>
+                </Layout>
+            </ImageBackground>
         </ApplicationProvider>
     );
 };
@@ -137,6 +145,11 @@ const themedStyles = StyleService.create({
     container: {
         flexDirection: "row",
         flexWrap: "wrap",
+        backgroundColor: "transparent",
+    },
+    backgroundImage: {
+        flex: 1,
+        resizeMode: "cover",
     },
 });
 
