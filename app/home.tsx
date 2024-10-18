@@ -13,26 +13,18 @@ import {
     ButtonGroup,
 } from "@ui-kitten/components";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
-import { fetchAllItems } from "@/backend/api";
+import { fetchFiveItems, Item } from "@/backend/api";
 import { default as customTheme } from "./custom-theme.json"; // <-- Import app theme
 import { router } from "expo-router";
 
 const HomeScreen: React.FC = () => {
     const styles = useStyleSheet(themedStyles); // Use UI Kitten's theming
-    const [offerings, setOfferings] = useState<any[]>([]);
+    const [offerings, setOfferings] = useState<Item[]>([]);
 
     useEffect(() => {
-        // Fetch 5 initial offeringss
         try {
-            // const loadPosts = async () => {
-            //     const data: Post[] = await fetchPosts(5);
-            //     console.log("Posts loaded");
-            //     setOfferings(data);
-            // };
-            // loadPosts();
-
             const loadItems = async () => {
-                const data = await fetchAllItems();
+                const data = await fetchFiveItems();
                 console.log("Loaded all items");
                 setOfferings(data);
             };
@@ -110,6 +102,8 @@ const HomeScreen: React.FC = () => {
                             renderItem={({ item }) => (
                                 <Layout
                                     style={{
+                                        flexDirection: "row",
+                                        justifyContent: "space-between",
                                         padding: 10,
                                         borderBottomWidth: 1,
                                         borderBottomColor: "#ccc",
@@ -117,10 +111,11 @@ const HomeScreen: React.FC = () => {
                                         backgroundColor: "transparent",
                                     }}
                                 >
-                                    <Text>{item.title}</Text>
+                                    <Text>{item.name}</Text>
+                                    <Text>{"$" + item.value}</Text>
                                 </Layout>
                             )}
-                            keyExtractor={(item) => item.id}
+                            keyExtractor={(item) => item.item_id}
                         />
                     </SafeAreaView>
                 </Layout>
