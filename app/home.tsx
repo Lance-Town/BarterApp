@@ -1,25 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, FlatList } from "react-native";
-import * as eva from '@eva-design/eva';
-import { Button, Divider, Layout, TopNavigation, ApplicationProvider, Text, StyleService, useStyleSheet, ButtonGroup } from "@ui-kitten/components";
-import { EvaIconsPack } from '@ui-kitten/eva-icons';
-import { default as customTheme } from './custom-theme.json'; // <-- Import app theme
-
-// Sample data for the top offerings
-const offerings = [
-    { id: "1", title: "Offering 1" },
-    { id: "2", title: "Offering 2" },
-    { id: "3", title: "Offering 3" },
-    { id: "4", title: "Offering 4" },
-    { id: "5", title: "Offering 5" },
-];
+import * as eva from "@eva-design/eva";
+import {
+    Button,
+    Divider,
+    Layout,
+    TopNavigation,
+    ApplicationProvider,
+    Text,
+    StyleService,
+    useStyleSheet,
+    ButtonGroup,
+} from "@ui-kitten/components";
+import { EvaIconsPack } from "@ui-kitten/eva-icons";
+import { fetchAllItems } from "@/backend/api";
+import { default as customTheme } from "./custom-theme.json"; // <-- Import app theme
+import { router } from "expo-router";
 
 const HomeScreen: React.FC = () => {
     const styles = useStyleSheet(themedStyles); // Use UI Kitten's theming
+    const [offerings, setOfferings] = useState<any[]>([]);
+
+    useEffect(() => {
+        // Fetch 5 initial offeringss
+        try {
+            // const loadPosts = async () => {
+            //     const data: Post[] = await fetchPosts(5);
+            //     console.log("Posts loaded");
+            //     setOfferings(data);
+            // };
+            // loadPosts();
+
+            const loadItems = async () => {
+                const data = await fetchAllItems();
+                console.log("Loaded all items");
+                setOfferings(data);
+            };
+            loadItems();
+        } catch (error: any) {
+            console.log("Error loading 5 offerings: " + error.message);
+        }
+    }, []);
 
     const handlePostOffering = () => {
         // Logic for posting an offering
-        console.log("Post Offering");
+        router.push("/NewPost");
     };
 
     const handleViewAllOfferings = () => {
@@ -28,7 +53,7 @@ const HomeScreen: React.FC = () => {
     };
 
     return (
-        <ApplicationProvider {...eva} theme={{...eva.dark, ...customTheme}}>
+        <ApplicationProvider {...eva} theme={{ ...eva.dark, ...customTheme }}>
             <Layout style={{ width: "100%", height: "100%" }}>
                 <SafeAreaView style={{ flex: 1 }}>
                     <TopNavigation title="BarterApp" alignment="center" />
@@ -40,11 +65,20 @@ const HomeScreen: React.FC = () => {
                             alignItems: "center",
                         }}
                     >
-                        <Layout style={styles.container} level='1'>
-                            <Button style={styles.inlineButton} appearance="outline" onPress={handlePostOffering}>
+                        <Layout style={styles.container} level="1">
+                            <Button
+                                style={styles.inlineButton}
+                                appearance="outline"
+                                onPress={handlePostOffering}
+                            >
                                 Post Offering
                             </Button>
-                            <Button style={styles.inlineButton} appearance="outline" status="success" onPress={handleViewAllOfferings}>
+                            <Button
+                                style={styles.inlineButton}
+                                appearance="outline"
+                                status="success"
+                                onPress={handleViewAllOfferings}
+                            >
                                 All Offerings
                             </Button>
                         </Layout>
@@ -57,7 +91,7 @@ const HomeScreen: React.FC = () => {
                             paddingLeft: 10,
                         }}
                     >
-                        Top 5 Offerings
+                        5 Random Posts
                     </Text>
                     <FlatList
                         style={styles.content}
@@ -71,10 +105,15 @@ const HomeScreen: React.FC = () => {
                                     width: "100%",
                                 }}
                             >
-                                <Text>{item.title}</Text>
+                                <Text>
+                                    {`${item.name ? item.name : "ERROR"}`}
+                                </Text>
+                                <Text>
+                                    {`${item.value ? item.value : "ERROR"}`}
+                                </Text>
                             </Layout>
                         )}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item.item_id.toString()}
                     />
                 </SafeAreaView>
             </Layout>
@@ -88,17 +127,17 @@ const themedStyles = StyleService.create({
     },
     logo: {
         width: 150,
-        height: 150, 
-        marginBottom: 20, 
+        height: 150,
+        marginBottom: 20,
         marginTop: 40,
     },
     content: {
         padding: 10,
     },
     container: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-      },
+        flexDirection: "row",
+        flexWrap: "wrap",
+    },
 });
 
 export default HomeScreen;
