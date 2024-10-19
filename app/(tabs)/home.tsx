@@ -13,10 +13,10 @@ import {
 } from "@ui-kitten/components";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { fetchFiveItems, Item } from "@/backend/api";
-import { default as customTheme } from "./custom-theme.json"; // <-- Import app theme
+import { default as customTheme } from "../custom-theme.json"; // <-- Import app theme
 import { router } from "expo-router";
 import AppHeader from "@/components/AppHeader";
-import { AppBottomNavigation } from "@/components/AppBottomNavigation";
+// import { AppBottomNavigation } from "@/components/AppBottomNavigation";
 
 const HomeScreen: React.FC = () => {
     const styles = useStyleSheet(themedStyles); // Use UI Kitten's theming
@@ -37,7 +37,7 @@ const HomeScreen: React.FC = () => {
 
     const handlePostItem = () => {
         // Logic for posting an offering
-        router.push("./newItem");
+        router.push("../newItem");
     };
 
     const handleViewAllOfferings = () => {
@@ -48,7 +48,7 @@ const HomeScreen: React.FC = () => {
     return (
         <ApplicationProvider {...eva} theme={{ ...eva.dark, ...customTheme }}>
             <ImageBackground
-                source={require("../assets/logo/trade4spread.png")} // Replace with your image URL or local path
+                source={require("@/assets/logo/trade4spread.png")} // Replace with your image URL or local path
                 style={themedStyles.backgroundImage}
             >
                 <Layout
@@ -119,7 +119,7 @@ const HomeScreen: React.FC = () => {
                             keyExtractor={(item) => item.item_id}
                         />
 
-                        <AppBottomNavigation />
+                        {/* <AppBottomNavigation /> */}
                     </SafeAreaView>
                 </Layout>
             </ImageBackground>
