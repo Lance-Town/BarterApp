@@ -211,7 +211,8 @@ export const fetchFiveItems = async (): Promise<Item[]> => {
 
 // Function to post a new item
 export const addItem = async (
-    item: Omit<Item, "item_id">
+    item: Omit<Item, "item_id">,
+    user_id: number
 ): Promise<{ message: string; item_id: number }> => {
     try {
         const url = `http://${SERVER_IP}:${SERVER_PORT}/item`;
@@ -220,7 +221,7 @@ export const addItem = async (
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(item),
+            body: JSON.stringify({ ...item, user_id }),
         });
 
         const data = await response.json();

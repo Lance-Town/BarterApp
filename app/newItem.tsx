@@ -15,11 +15,13 @@ import {
     Button,
 } from "@ui-kitten/components";
 import AppHeader, { Logo } from "@/components/AppHeader";
+import { useUser } from "@/hooks/UserContext";
 import { addItem } from "@/backend/api";
 
 const NewItem = () => {
     const [name, setName] = useState("");
     const [value, setValue] = useState("");
+    const { userId } = useUser();
 
     // Function to handle form submission
     const handleAddItem = async () => {
@@ -28,12 +30,16 @@ const NewItem = () => {
             Alert.alert("Error", "Please fill out all fields");
             return;
         }
-
         // get the value as a number
         const valueNum = parseFloat(value);
 
+        if (valueNum < 1) {
+            Alert.alert("Error", "Value must be $1 or more");
+            return;
+        }
+
         // Transfer cost is the 5% fee added by sysem
-        const transferCostNum = valueNum / 20;
+        const transferCostNum = Math.ceil(valueNum / 20);
 
         // Check for valid number input
         if (isNaN(transferCostNum) || isNaN(valueNum)) {
@@ -46,18 +52,32 @@ const NewItem = () => {
 
         try {
             // Call the API to add the new item
-            const response = await addItem({
-                name: name.trim(),
-                transfer_cost: transferCostNum,
-                value: valueNum,
-            });
+            if (userId != null) {
+                const response = await addItem(
+                    {
+                        name: name.trim(),
+                        transfer_cost: transferCostNum,
+                        value: valueNum,
+                    },
+                    userId
+                );
 
-            Alert.alert("Success");
-
-            // Clear form fields after successful addition
-            setName("");
-            setValue("");
+                if (response.message === "Item created") {
+                    Alert.alert("Success", "Item added successfully!");
+                    // clear form fields
+                    setName("");
+                    setValue("");
+                } else {
+                    Alert.alert(
+                        "Error",
+                        "Failed to add item. Please try again."
+                    );
+                }
+            } else {
+                alert("User ID required");
+            }
         } catch (error) {
+            console.error("Error adding item:", error);
             Alert.alert("Error", "Failed to add item. Please try again.");
         }
     };
