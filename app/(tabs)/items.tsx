@@ -4,6 +4,7 @@ import { Text, Layout, StyleService } from "@ui-kitten/components";
 import { getUserItems, Item } from "@/backend/api";
 import { useStyleSheet } from "@ui-kitten/components";
 import { useUser } from "@/hooks/UserContext";
+import AppHeader from "@/components/AppHeader";
 
 const ItemsScreen: React.FC = () => {
     const { userId } = useUser(); // get the user id from the contex
@@ -27,19 +28,31 @@ const ItemsScreen: React.FC = () => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <FlatList
-                data={items}
-                keyExtractor={(item) => item.item_id.toString()}
-                renderItem={({ item }) => (
-                    <Layout style={styles.itemContainer}>
-                        <Text style={styles.itemName}>{item.name}</Text>
-                        <Text style={styles.itemName}>{item.value}</Text>
-                        <Text style={styles.itemName}>
-                            {item.transfer_cost}
-                        </Text>
-                    </Layout>
-                )}
-            ></FlatList>
+            <AppHeader />
+            <Layout
+                style={{
+                    margin: 10,
+                    padding: 10,
+                    borderRadius: 10,
+                    backgroundColor: "#f8f8f8",
+                }}
+            >
+                <FlatList
+                    data={items}
+                    keyExtractor={(item) => item.item_id.toString()}
+                    renderItem={({ item }) => (
+                        <Layout style={styles.itemContainer}>
+                            <Text style={styles.itemName}>{item.name}</Text>
+                            <Text
+                                style={styles.itemName}
+                            >{`Value: $${item.value}`}</Text>
+                            <Text style={styles.itemName}>
+                                {`Transfer Cost: $${item.transfer_cost}`}
+                            </Text>
+                        </Layout>
+                    )}
+                ></FlatList>
+            </Layout>
         </SafeAreaView>
     );
 };
@@ -48,6 +61,7 @@ const styles = StyleService.create({
     container: {
         flex: 1,
         padding: 16,
+        backgroundColor: "#292929",
     },
     itemContainer: {
         padding: 16,
