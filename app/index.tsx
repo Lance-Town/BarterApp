@@ -13,65 +13,71 @@ import {
 } from "@ui-kitten/components";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { default as customTheme } from "./custom-theme.json"; // <-- Import app theme
+import { UserProvider } from "@/hooks/UserContext";
 
 const Index: React.FC = () => {
     const styles = useStyleSheet(themedStyles); // Use UI Kitten's theming
 
     return (
-        <ApplicationProvider {...eva} theme={{ ...eva.dark, ...customTheme }}>
-            <ImageBackground
-                source={require("../assets/logo/trade4spread.png")} // Replace with your image URL or local path
-                style={themedStyles.backgroundImage}
+        <UserProvider>
+            <ApplicationProvider
+                {...eva}
+                theme={{ ...eva.dark, ...customTheme }}
             >
-                <Layout
-                    style={{
-                        flex: 1,
-                        justifyContent: "flex-start",
-                        alignItems: "center",
-                        paddingTop: 60,
-                        backgroundColor: "transparent",
-                    }}
+                <ImageBackground
+                    source={require("../assets/logo/trade4spread.png")} // Replace with your image URL or local path
+                    style={themedStyles.backgroundImage}
                 >
-                    <Image
-                        source={require("../assets/logo/trade4gold.png")} //placeholder logo for now
-                        style={themedStyles.logo}
-                        resizeMode="contain"
-                    />
-
                     <Layout
                         style={{
-                            flex: 1, // Takes up remaining space
-                            justifyContent: "flex-end", // Push content to the bottom
-                            width: "100%", // Ensures buttons are aligned to full width
-                            alignItems: "center", // Center the buttons horizontally
-                            paddingBottom: 100, // Add some space at the bottom
+                            flex: 1,
+                            justifyContent: "flex-start",
+                            alignItems: "center",
+                            paddingTop: 60,
                             backgroundColor: "transparent",
                         }}
                     >
-                        <Text style={styles.title} category="h6">
-                            Welcome to the Trade 4!
-                        </Text>
-                        <Layout style={styles.container} level="1">
-                            <Button
-                                style={styles.button}
-                                appearance="outline"
-                                onPress={() => router.push("/signIn")}
-                            >
-                                Sign In
-                            </Button>
+                        <Image
+                            source={require("../assets/logo/trade4gold.png")} //placeholder logo for now
+                            style={themedStyles.logo}
+                            resizeMode="contain"
+                        />
 
-                            <Button
-                                style={styles.button}
-                                appearance="filled"
-                                onPress={() => router.push("/signUp")}
-                            >
-                                Sign Up
-                            </Button>
+                        <Layout
+                            style={{
+                                flex: 1, // Takes up remaining space
+                                justifyContent: "flex-end", // Push content to the bottom
+                                width: "100%", // Ensures buttons are aligned to full width
+                                alignItems: "center", // Center the buttons horizontally
+                                paddingBottom: 100, // Add some space at the bottom
+                                backgroundColor: "transparent",
+                            }}
+                        >
+                            <Text style={styles.title} category="h6">
+                                Welcome to the Trade 4!
+                            </Text>
+                            <Layout style={styles.container} level="1">
+                                <Button
+                                    style={styles.button}
+                                    appearance="outline"
+                                    onPress={() => router.push("/signIn")}
+                                >
+                                    Sign In
+                                </Button>
+
+                                <Button
+                                    style={styles.button}
+                                    appearance="filled"
+                                    onPress={() => router.push("/signUp")}
+                                >
+                                    Sign Up
+                                </Button>
+                            </Layout>
                         </Layout>
                     </Layout>
-                </Layout>
-            </ImageBackground>
-        </ApplicationProvider>
+                </ImageBackground>
+            </ApplicationProvider>
+        </UserProvider>
     );
 };
 

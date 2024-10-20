@@ -16,12 +16,14 @@ import {
 import { EvaIconsPack } from "@ui-kitten/eva-icons"; // <-- Import EvaIconsPack
 import { signInUser, SignInData } from "@/backend/api";
 import { default as customTheme } from "./custom-theme.json"; // <-- Import app theme
+import { useUser } from "@/hooks/UserContext";
 
 const SignInScreen: React.FC = () => {
     const router = useRouter();
     const styles = useStyleSheet(themedStyles); // Use UI Kitten's theming
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
+    const { setUserId } = useUser();
 
     const handleSignIn = async () => {
         if (!email || !password) {
@@ -33,6 +35,7 @@ const SignInScreen: React.FC = () => {
 
         try {
             const result = await signInUser(signInData);
+            setUserId(result.user_id);
             console.log("Sign-in Successful", result);
             router.push("/home");
         } catch (error: any) {
