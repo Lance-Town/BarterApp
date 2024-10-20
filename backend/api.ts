@@ -11,7 +11,13 @@ export interface SignUpData {
 }
 
 // function to sign up a user
-export const signUpUser = async (signUpData: SignUpData): Promise<any> => {
+export const signUpUser = async (
+    signUpData: SignUpData
+): Promise<{
+    message: string;
+    user_id: number;
+    access_level: number;
+} | null> => {
     const {
         email,
         password,
@@ -24,12 +30,12 @@ export const signUpUser = async (signUpData: SignUpData): Promise<any> => {
     // basic validation
     if (password !== confirmPassword) {
         alert("Passwords do no match");
-        return;
+        return null;
     }
 
     if (!email || !password) {
         alert("Email and Password are required");
-        return;
+        return null;
     }
 
     try {
@@ -51,7 +57,11 @@ export const signUpUser = async (signUpData: SignUpData): Promise<any> => {
         const data = await response.json();
 
         if (response.ok) {
-            return data;
+            return {
+                message: data.message,
+                user_id: data.user_id,
+                access_level: data.access_level,
+            };
         } else {
             throw new Error(data.message);
         }
@@ -128,7 +138,9 @@ export interface SignInData {
 }
 
 // Function to sign in a user
-export const signInUser = async (signInData: SignInData): Promise<any> => {
+export const signInUser = async (
+    signInData: SignInData
+): Promise<{ message: string; user_id: number; access_level: number }> => {
     try {
         const url = `http://${SERVER_IP}:${SERVER_PORT}/signin`;
         const response = await fetch(url, {
@@ -225,7 +237,7 @@ export const addItem = async (
 };
 
 // Function to get all items owned by a user
-export const getUserItems = async (userId: number) => {
+export const getUserItems = async (userId: number): Promise<Item[]> => {
     try {
         const url = `http://${SERVER_IP}:${SERVER_PORT}/owns/${userId}`;
         const response = await fetch(url);
@@ -244,7 +256,10 @@ export const getUserItems = async (userId: number) => {
 };
 
 // Function to get a specific item owned by a user
-export const getUserItem = async (userId: number, itemId: number) => {
+export const getUserItem = async (
+    userId: number,
+    itemId: number
+): Promise<Item> => {
     try {
         const url = `http://${SERVER_IP}:${SERVER_PORT}/owns/${userId}/${itemId}`;
         const response = await fetch(url);
