@@ -223,3 +223,38 @@ export const addItem = async (
         throw error;
     }
 };
+
+// Function to get all items owned by a user
+export const getUserItems = async (userId: number) => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/owns/${userId}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(
+                `Failed to fetch items, status: ${response.status}`
+            );
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching user items:", error);
+        throw error;
+    }
+};
+
+// Function to get a specific item owned by a user
+export const getUserItem = async (userId: number, itemId: number) => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/owns/${userId}/${itemId}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch item, status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching user item:", error);
+        throw error;
+    }
+};
