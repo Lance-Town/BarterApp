@@ -16,7 +16,6 @@ import { fetchFiveItems, Item } from "@/backend/api";
 import { default as customTheme } from "../custom-theme.json"; // <-- Import app theme
 import { router } from "expo-router";
 import AppHeader from "@/components/AppHeader";
-// import { AppBottomNavigation } from "@/components/AppBottomNavigation";
 
 const HomeScreen: React.FC = () => {
     const styles = useStyleSheet(themedStyles); // Use UI Kitten's theming
@@ -118,8 +117,6 @@ const HomeScreen: React.FC = () => {
                             )}
                             keyExtractor={(item) => item.item_id}
                         />
-
-                        {/* <AppBottomNavigation /> */}
                     </SafeAreaView>
                 </Layout>
             </ImageBackground>
