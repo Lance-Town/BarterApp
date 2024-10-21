@@ -169,6 +169,8 @@ export interface Item {
     name: string;
     transfer_cost: number;
     value: number;
+    condition: string;
+    category_id: string;
 }
 
 // Function to fetch all users
@@ -212,7 +214,8 @@ export const fetchFiveItems = async (): Promise<Item[]> => {
 // Function to post a new item
 export const addItem = async (
     item: Omit<Item, "item_id">,
-    user_id: number
+    user_id: number,
+    friend_user_id: number
 ): Promise<{ message: string; item_id: number }> => {
     try {
         const url = `http://${SERVER_IP}:${SERVER_PORT}/item`;
@@ -221,7 +224,7 @@ export const addItem = async (
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ ...item, user_id }),
+            body: JSON.stringify({ ...item, user_id, friend_user_id }),
         });
 
         const data = await response.json();
@@ -271,6 +274,54 @@ export const getUserItem = async (
         return data;
     } catch (error) {
         console.error("Error fetching user item:", error);
+        throw error;
+    }
+};
+
+export interface Category {
+    category_id: number;
+    name: string;
+    base_value: number;
+}
+
+// route to get all categories from db
+export const getCategories = async (): Promise<Category[]> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/categories`;
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(
+                `Failed to fetch categories, status: ${response.status}`
+            );
+        }
+        const data: Category[] = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching categories:", error);
+        throw error;
+    }
+};
+
+export interface Friend {
+    user_id: number;
+    email: string;
+}
+
+// route to get all the friends of a user
+export const getFriends = async (userId: number): Promise<Friend[]> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/friends/${userId}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(
+                `Failed to fetch friends list, status: ${response.status}`
+            );
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching friends:", error);
         throw error;
     }
 };

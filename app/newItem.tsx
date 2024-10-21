@@ -1,72 +1,115 @@
-import React, { useState } from "react";
-import {
-    View,
-    TextInput,
-    Alert,
-    StyleSheet,
-    ImageBackground,
-} from "react-native";
-import {
-    Layout,
-    Divider,
-    TopNavigation,
-    Text,
-    Input,
-    Button,
-} from "@ui-kitten/components";
-import AppHeader, { Logo } from "@/components/AppHeader";
+import React, { useState, useEffect } from "react";
+import { View, Alert, StyleSheet, ImageBackground } from "react-native";
+import { Input, Button, Select, SelectItem } from "@ui-kitten/components";
+import AppHeader from "@/components/AppHeader";
 import { useUser } from "@/hooks/UserContext";
-import { addItem } from "@/backend/api";
+import {
+    addItem,
+    getCategories,
+    Category,
+    getFriends,
+    Friend,
+} from "@/backend/api";
+
+export const conditions = [
+    { text: "New", value: "New", multiplier: 1.0 },
+    { text: "Like New", value: "Like New", multiplier: 0.9 },
+    { text: "Very Good", value: "Very Good", multiplier: 0.8 },
+    { text: "Good", value: "Good", multiplier: 0.7 },
+    { text: "Fair", value: "Fair", multiplier: 0.6 },
+    { text: "Poor", value: "Poor", multiplier: 0.5 },
+];
+
+export const baseValue = 100;
 
 const NewItem = () => {
     const [name, setName] = useState("");
-    const [value, setValue] = useState("");
+    const [condition, setCondition] = useState("");
+    const [categoryId, setCategoryId] = useState<string>(""); // Store category_id
+    const [categoryMultiplier, setCategoryMultiplier] = useState<number>(1.0); // Store category multiplier
+    const [friend, setFriend] = useState<string>("");
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [friends, setFriends] = useState<Friend[]>([]);
     const { userId } = useUser();
 
-    // Function to handle form submission
+    useEffect(() => {
+        const loadCategories = async () => {
+            try {
+                const categoriesResponse = await getCategories();
+                setCategories(categoriesResponse);
+            } catch (error) {
+                console.error("Error fetching categories:", error);
+                Alert.alert("Error", "Failed to fetch categories");
+            }
+        };
+
+        const loadFriends = async () => {
+            if (userId == null) {
+                return;
+            }
+
+            try {
+                const friendsResponse = await getFriends(userId);
+                setFriends(friendsResponse);
+            } catch (error) {
+                console.error("Error fetching friends:", error);
+                Alert.alert("Error", "Failed to fetch friends");
+            }
+        };
+
+        loadCategories();
+        loadFriends();
+    }, [userId]);
+
     const handleAddItem = async () => {
-        // Validate inputs
-        if (!name || !value) {
+        if (!name || !categoryId || !friend || condition === "") {
             Alert.alert("Error", "Please fill out all fields");
             return;
         }
-        // get the value as a number
-        const valueNum = parseFloat(value);
 
-        if (valueNum < 1) {
-            Alert.alert("Error", "Value must be $1 or more");
+        // Find the selected condition multiplier
+        const conditionData = conditions.find((c) => c.value === condition);
+        const conditionMultiplier = conditionData
+            ? conditionData.multiplier
+            : 1; // Default to 1 if not found
+
+        // Calculate the final value using the base value, category multiplier, and condition multiplier
+        const finalValue = baseValue * categoryMultiplier * conditionMultiplier;
+
+        if (finalValue < 1) {
+            Alert.alert("Error", "Final value must be $1 or more");
             return;
         }
 
-        // Transfer cost is the 5% fee added by sysem
-        const transferCostNum = Math.ceil(valueNum / 20);
+        const transferCostNum = Math.ceil(finalValue / 20);
+        const friend_user_id = parseInt(friend);
 
-        // Check for valid number input
-        if (isNaN(transferCostNum) || isNaN(valueNum)) {
-            Alert.alert(
-                "Error",
-                "Transfer cost and value must be valid numbers"
-            );
+        if (isNaN(friend_user_id)) {
+            Alert.alert("Error", "Friend user id is not a number");
             return;
         }
 
         try {
-            // Call the API to add the new item
             if (userId != null) {
                 const response = await addItem(
                     {
                         name: name.trim(),
                         transfer_cost: transferCostNum,
-                        value: valueNum,
+                        value: finalValue,
+                        category_id: categoryId,
+                        condition: condition.trim(),
                     },
-                    userId
+                    userId,
+                    friend_user_id
                 );
 
                 if (response.message === "Item created") {
                     Alert.alert("Success", "Item added successfully!");
-                    // clear form fields
                     setName("");
-                    setValue("");
+                    setCategoryId(""); // Reset category_id
+                    setFriend(""); // Reset friend selection
+                    setCondition(""); // Clear condition input
+                    setCategoryMultiplier(1.0); // Reset category multiplier
                 } else {
                     Alert.alert(
                         "Error",
@@ -74,7 +117,7 @@ const NewItem = () => {
                     );
                 }
             } else {
-                alert("User ID required");
+                Alert.alert("Error", "User ID required");
             }
         } catch (error) {
             console.error("Error adding item:", error);
@@ -84,7 +127,7 @@ const NewItem = () => {
 
     return (
         <ImageBackground
-            source={require("../assets/logo/trade4spread.png")} // Replace with your image URL or local path
+            source={require("../assets/logo/trade4spread.png")}
             style={styles.backgroundImage}
         >
             <View style={styles.container}>
@@ -96,13 +139,61 @@ const NewItem = () => {
                         value={name}
                         onChangeText={setName}
                     />
-                    <Input
-                        style={styles.input}
-                        placeholder="Value"
-                        value={value}
-                        onChangeText={setValue}
-                        keyboardType="numeric"
-                    />
+                    <Select
+                        style={styles.select}
+                        placeholder="Select Category"
+                        value={categoryId}
+                        onSelect={(index) => {
+                            if (!Array.isArray(index)) {
+                                const selectedCategory = categories[index.row];
+                                setCategoryId(
+                                    selectedCategory.category_id.toString()
+                                );
+                                setCategoryMultiplier(
+                                    selectedCategory.base_value
+                                ); // Set the category multiplier
+                            }
+                        }}
+                    >
+                        {categories.map((cat) => (
+                            <SelectItem
+                                key={cat.category_id}
+                                title={cat.name}
+                            />
+                        ))}
+                    </Select>
+
+                    <Select
+                        style={styles.select}
+                        placeholder="Select Condition"
+                        value={condition}
+                        onSelect={(index) => {
+                            if (!Array.isArray(index)) {
+                                setCondition(conditions[index.row].value);
+                            }
+                        }}
+                    >
+                        {conditions.map((cond) => (
+                            <SelectItem key={cond.value} title={cond.text} />
+                        ))}
+                    </Select>
+
+                    <Select
+                        style={styles.select}
+                        placeholder="Select Friend"
+                        value={friend}
+                        onSelect={(index) => {
+                            if (!Array.isArray(index)) {
+                                setFriend(
+                                    friends[index.row].user_id.toString()
+                                );
+                            }
+                        }}
+                    >
+                        {friends.map((f) => (
+                            <SelectItem key={f.user_id} title={f.email} />
+                        ))}
+                    </Select>
                     <Button onPress={handleAddItem}>Add Item</Button>
                 </View>
             </View>
@@ -122,6 +213,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginBottom: 10,
         paddingLeft: 8,
+    },
+    select: {
+        marginBottom: 10,
     },
     backgroundImage: {
         flex: 1,
