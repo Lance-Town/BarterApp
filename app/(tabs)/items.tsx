@@ -31,7 +31,8 @@ const ItemsScreen: React.FC = () => {
             <AppHeader />
             <Layout
                 style={{
-                    margin: 10,
+                    margin: 20,
+                    marginBottom: 70,
                     padding: 10,
                     borderRadius: 10,
                     backgroundColor: "#f8f8f8",
