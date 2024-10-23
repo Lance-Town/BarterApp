@@ -32,9 +32,10 @@ const ItemsScreen: React.FC = () => {
             <Layout
                 style={{
                     margin: 10,
+                    marginBottom: 50,
                     padding: 10,
                     borderRadius: 10,
-                    backgroundColor: "#f8f8f8",
+                    backgroundColor: "#595858",
                 }}
             >
                 <FlatList
@@ -65,13 +66,14 @@ const styles = StyleService.create({
     },
     itemContainer: {
         padding: 16,
-        backgroundColor: "#f8f8f8",
+        backgroundColor: "#595858",
         borderBottomWidth: 1,
         borderColor: "#ddd",
     },
     itemName: {
         fontSize: 18,
         fontWeight: "bold",
+        color: "#f8f8f8",
     },
     itemDetails: {
         fontSize: 14,
