@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons"; // Import Feather icons
 
 export default function TabsLayout() {
     return (
@@ -9,7 +9,7 @@ export default function TabsLayout() {
                 tabBarStyle: {
                     backgroundColor: "#1A1A1A",
                     borderTopWidth: 0,
-                    height: 70,
+                    height: 75,
                     paddingBottom: 20,
                 },
                 tabBarActiveTintColor: "#FFDA4B",
@@ -17,26 +17,26 @@ export default function TabsLayout() {
                 tabBarLabelStyle: {
                     fontSize: 12,
                     fontWeight: "600",
-                    marginTop: -4,
+                    marginTop: -2,
                 },
                 tabBarIcon: ({ focused, color, size }) => {
-                    let iconName: keyof typeof Ionicons.glyphMap;
+                    let iconName: keyof typeof Feather.glyphMap;
 
                     switch (route.name) {
-                        case "index":
-                            iconName = focused ? "home" : "home-outline";
+                        case "home":
+                            iconName = "home";
                             break;
                         case "items":
-                            iconName = focused ? "list" : "list-outline";
+                            iconName = "list";
                             break;
                         case "transactions":
-                            iconName = focused ? "wallet" : "wallet-outline";
+                            iconName = "credit-card";
                             break;
                         default:
-                            iconName = "help-circle-outline"; // Fallback icon
+                            iconName = "help-circle"; // Fallback icon
                     }
 
-                    return <Ionicons name={iconName} size={size} color={color} />;
+                    return <Feather name={iconName} size={size} color={color} />;
                 },
             })}
         >
