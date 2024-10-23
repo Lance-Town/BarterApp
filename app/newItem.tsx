@@ -23,8 +23,8 @@ export const conditions = [
 export const baseValue = 100;
 
 const NewItem = () => {
-    const [name, setName] = useState("");
-    const [condition, setCondition] = useState("");
+    const [name, setName] = useState<string>("");
+    const [condition, setCondition] = useState<string>("");
     const [categoryId, setCategoryId] = useState<string>(""); // Store category_id
     const [categoryMultiplier, setCategoryMultiplier] = useState<number>(1.0); // Store category multiplier
     const [friend, setFriend] = useState<string>("");
