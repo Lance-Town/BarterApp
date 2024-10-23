@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { View, Alert, StyleSheet, ImageBackground } from "react-native";
-import { Input, Button, Select, SelectItem } from "@ui-kitten/components";
+import { Alert, Image, ImageBackground } from "react-native";
+import { router } from "expo-router";
+import * as eva from "@eva-design/eva";
+import { Layout, ApplicationProvider, useStyleSheet, StyleService, Input, Button, Select, SelectItem } from "@ui-kitten/components";
+import { EvaIconsPack } from "@ui-kitten/eva-icons";
+import { default as customTheme } from "./custom-theme.json"; // <-- Import app theme
 import AppHeader from "@/components/AppHeader";
-import { useUser } from "@/hooks/UserContext";
+import { UserProvider, useUser } from "@/hooks/UserContext";
 import {
     addItem,
     getCategories,
@@ -125,94 +129,115 @@ const NewItem = () => {
         }
     };
 
+    const styles = useStyleSheet(themedStyles);
+
     return (
-        <ImageBackground
-            source={require("../assets/logo/trade4spread.png")}
-            style={styles.backgroundImage}
-        >
-            <View style={styles.container}>
-                <AppHeader />
-                <View>
-                    <Input
-                        style={styles.input}
-                        placeholder="Item Name"
-                        value={name}
-                        onChangeText={setName}
-                    />
-                    <Select
-                        style={styles.select}
-                        placeholder="Select Category"
-                        value={categoryId}
-                        onSelect={(index) => {
-                            if (!Array.isArray(index)) {
-                                const selectedCategory = categories[index.row];
-                                setCategoryId(
-                                    selectedCategory.category_id.toString()
-                                );
-                                setCategoryMultiplier(
-                                    selectedCategory.base_value
-                                ); // Set the category multiplier
-                            }
-                        }}
-                    >
-                        {categories.map((cat) => (
-                            <SelectItem
-                                key={cat.category_id}
-                                title={cat.name}
+        <UserProvider>
+            <ApplicationProvider
+                {...eva}
+                theme={{ ...eva.dark, ...customTheme }}
+            >
+                <ImageBackground
+                    source={require("../assets/logo/trade4spread.png")}
+                    style={styles.backgroundImage}
+                >
+                    <Layout style={styles.container}>
+                        <Layout style={ styles.header }
+                            level="1"
+                        >
+                            <Button
+                                style={styles.backButton}
+                                appearance="outline"
+                                onPress={() => router.back()} 
+                            >
+                                Back
+                            </Button>
+                            <Image
+                                source={require("../assets/logo/trade4gold.png")} //placeholder logo for now
+                                style={themedStyles.logo}
+                                resizeMode="contain"
                             />
-                        ))}
-                    </Select>
+                        </Layout>
 
-                    <Select
-                        style={styles.select}
-                        placeholder="Select Condition"
-                        value={condition}
-                        onSelect={(index) => {
-                            if (!Array.isArray(index)) {
-                                setCondition(conditions[index.row].value);
-                            }
-                        }}
-                    >
-                        {conditions.map((cond) => (
-                            <SelectItem key={cond.value} title={cond.text} />
-                        ))}
-                    </Select>
+                        <Layout>
+                            <Input
+                                style={styles.input}
+                                placeholder="Item Name"
+                                value={name}
+                                onChangeText={setName}
+                            />
+                            <Select
+                                style={styles.select}
+                                placeholder="Select Category"
+                                value={categoryId}
+                                onSelect={(index) => {
+                                    if (!Array.isArray(index)) {
+                                        const selectedCategory = categories[index.row];
+                                        setCategoryId(
+                                            selectedCategory.category_id.toString()
+                                        );
+                                        setCategoryMultiplier(
+                                            selectedCategory.base_value
+                                        ); // Set the category multiplier
+                                    }
+                                }}
+                            >
+                                {categories.map((cat) => (
+                                    <SelectItem
+                                        key={cat.category_id}
+                                        title={cat.name}
+                                    />
+                                ))}
+                            </Select>
 
-                    <Select
-                        style={styles.select}
-                        placeholder="Select Friend"
-                        value={friend}
-                        onSelect={(index) => {
-                            if (!Array.isArray(index)) {
-                                setFriend(
-                                    friends[index.row].user_id.toString()
-                                );
-                            }
-                        }}
-                    >
-                        {friends.map((f) => (
-                            <SelectItem key={f.user_id} title={f.email} />
-                        ))}
-                    </Select>
-                    <Button onPress={handleAddItem}>Add Item</Button>
-                </View>
-            </View>
-        </ImageBackground>
+                            <Select
+                                style={styles.select}
+                                placeholder="Select Condition"
+                                value={condition}
+                                onSelect={(index) => {
+                                    if (!Array.isArray(index)) {
+                                        setCondition(conditions[index.row].value);
+                                    }
+                                }}
+                            >
+                                {conditions.map((cond) => (
+                                    <SelectItem key={cond.value} title={cond.text} />
+                                ))}
+                            </Select>
+
+                            <Select
+                                style={styles.select}
+                                placeholder="Select Friend"
+                                value={friend}
+                                onSelect={(index) => {
+                                    if (!Array.isArray(index)) {
+                                        setFriend(
+                                            friends[index.row].user_id.toString()
+                                        );
+                                    }
+                                }}
+                            >
+                                {friends.map((f) => (
+                                    <SelectItem key={f.user_id} title={f.email} />
+                                ))}
+                            </Select>
+                            <Button onPress={handleAddItem}>Add Item</Button>
+                        </Layout>
+                    </Layout>
+                </ImageBackground>
+            </ApplicationProvider>
+        </UserProvider>
     );
 };
 
-const styles = StyleSheet.create({
+const themedStyles = StyleService.create({
     container: {
         flex: 1,
         padding: 20,
         justifyContent: "center",
     },
     input: {
-        height: 40,
-        borderColor: "gray",
-        borderWidth: 1,
         marginBottom: 10,
-        paddingLeft: 8,
     },
     select: {
         marginBottom: 10,
@@ -220,6 +245,28 @@ const styles = StyleSheet.create({
     backgroundImage: {
         flex: 1,
         resizeMode: "cover",
+    },
+    backButton: {
+        marginTop: 30,
+        marginLeft: 10,
+    },
+    logo: {
+        width: 100,
+        height: 50,
+        marginTop: 20,  // Aligns logo with the top of the back button
+    },
+    header: {
+        position: "absolute", // Keeps it at the top
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 80,
+        marginTop: 30,
+        paddingHorizontal: 16,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        backgroundColor: "transparent",
     },
 });
 
