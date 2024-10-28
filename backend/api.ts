@@ -1,4 +1,5 @@
 import { SERVER_IP, SERVER_PORT } from "@/constants/config";
+import { err } from "react-native-svg";
 
 // interface for the signup data function
 export interface SignUpData {
@@ -211,6 +212,26 @@ export const fetchFiveItems = async (): Promise<Item[]> => {
     }
 };
 
+// Function to get all items on site not owned by user
+export const getOtherItems = async (user_id: number): Promise<Item[]> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/item/otherItems/${user_id}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(
+                `Failed to fetch other items, status: ${response.status}`
+            );
+        }
+
+        const data: Item[] = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching other items:", error);
+        throw error;
+    }
+};
+
 // Function to post a new item
 export const addItem = async (
     item: Omit<Item, "item_id">,
@@ -278,6 +299,24 @@ export const getUserItem = async (
     }
 };
 
+// Function to get an item from DB
+export const getItem = async (itemId: number): Promise<Item> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/item/${itemId}`;
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch item, status: ${response.status}`);
+        }
+        const data: Item = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching user item:", error);
+        throw error;
+    }
+};
+
 export interface Category {
     category_id: number;
     name: string;
@@ -322,6 +361,131 @@ export const getFriends = async (userId: number): Promise<Friend[]> => {
         return data;
     } catch (error) {
         console.error("Error fetching friends:", error);
+        throw error;
+    }
+};
+
+// props for creating a post
+export interface PostProps {
+    user1_id: number;
+    requestingItemId: number;
+    requestingAmount: number;
+    offeringItemId: number;
+    offeringAmount: number;
+    isNegotiable: number;
+}
+
+// generate hash code
+const generateHashCode = (itemId: number): string => {
+    const chars: string =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let hash: string = "";
+
+    for (let i = 0; i < 16; i++) {
+        hash += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+
+    return hash;
+};
+
+// Function to create a post and partnership on db
+export const createPost = async (args: PostProps): Promise<any> => {
+    try {
+        const hashcode = generateHashCode(args.requestingItemId);
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/postpartnership`;
+
+        console.log(`
+            api::createPost::DebugStart
+            user1_id: ${args.user1_id}  
+            requestingItemId: ${args.requestingItemId}
+            requestingAmount: ${args.requestingAmount}
+            offeringItemId: ${args.offeringItemId}
+            offeringAmount: ${args.offeringAmount}
+            isNegotiable: ${args.isNegotiable}
+            hashcode: ${hashcode}
+            api::createPost::DebugEnd
+            `);
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                ...args,
+                hashcode, // Include the generated hash code in the request body
+            }),
+        });
+
+        console.log(`
+            api::createPost::DebugStart2
+            response.ok: ${response.ok}
+            response.status: ${response.status}
+            response.headers: ${response.headers}
+            api::createPost::DebugEnd2
+            `);
+
+        if (!response.ok) {
+            throw new Error(`Error creating post, status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Failed to create post:", error);
+        throw error;
+    }
+};
+
+export interface Partnership {
+    partnershipId: number;
+    user2Accepted: boolean;
+    requestingItemId: number;
+    requestingAmount: number;
+    offeringItemId: number;
+    offeringAmount: number;
+}
+
+// Function to get posts requesting items the user has for sale
+export const getRequestedPosts = async (
+    user1_id: number
+): Promise<Partnership[]> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/requested-posts/${user1_id}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(
+                `Failed to fetch requested posts, status code: ${response.status}`
+            );
+        }
+
+        const data: Partnership[] = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching requested posts", error);
+        throw error;
+    }
+};
+
+// Function to get posts and partnership information made by user
+export const getUserPosts = async (
+    user1_id: number
+): Promise<Partnership[]> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/user-posts/${user1_id}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(
+                `Failed to fetch requested posts, status code: ${response.status}`
+            );
+        }
+
+        const data: Partnership[] = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching requested posts", error);
         throw error;
     }
 };

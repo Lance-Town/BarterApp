@@ -44,6 +44,11 @@ const HomeScreen: React.FC = () => {
         console.log("View All Offerings");
     };
 
+    const handleMakeTrade = () => {
+        console.log("Make a trade");
+        router.push("/newPost");
+    };
+
     return (
         <ApplicationProvider {...eva} theme={{ ...eva.dark, ...customTheme }}>
             <ImageBackground
@@ -83,6 +88,14 @@ const HomeScreen: React.FC = () => {
                                     onPress={handleViewAllOfferings}
                                 >
                                     All Offerings
+                                </Button>
+                                <Button
+                                    style={styles.inlineButton}
+                                    appearance="outline"
+                                    status="control"
+                                    onPress={handleMakeTrade}
+                                >
+                                    Make Trade
                                 </Button>
                             </Layout>
                         </Layout>
@@ -138,6 +151,8 @@ const themedStyles = StyleService.create({
         padding: 10,
     },
     container: {
+        flex: 0,
+        justifyContent: "center",
         flexDirection: "row",
         flexWrap: "wrap",
         backgroundColor: "transparent",
