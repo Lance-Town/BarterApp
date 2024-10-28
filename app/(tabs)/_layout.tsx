@@ -32,17 +32,26 @@ export default function TabsLayout() {
                         case "transactions":
                             iconName = "credit-card";
                             break;
+                        case "trades":
+                            iconName = "clock";
+                            break;
                         default:
                             iconName = "help-circle"; // Fallback icon
                     }
 
-                    return <Feather name={iconName} size={size} color={color} />;
+                    return (
+                        <Feather name={iconName} size={size} color={color} />
+                    );
                 },
             })}
         >
             <Tabs.Screen name="home" options={{ title: "Home" }} />
             <Tabs.Screen name="items" options={{ title: "Items" }} />
-            <Tabs.Screen name="transactions" options={{ title: "Transactions" }} />
+            <Tabs.Screen
+                name="transactions"
+                options={{ title: "Transactions" }}
+            />
+            <Tabs.Screen name="trades" options={{ title: "Trades" }} />
         </Tabs>
     );
 }
