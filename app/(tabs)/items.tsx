@@ -1,30 +1,33 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, FlatList, SafeAreaView } from "react-native";
 import { Text, Layout, StyleService } from "@ui-kitten/components";
 import { getUserItems, Item } from "@/backend/api";
 import { useStyleSheet } from "@ui-kitten/components";
 import { useUser } from "@/hooks/UserContext";
 import AppHeader from "@/components/AppHeader";
+import { useFocusEffect } from "expo-router";
 
 const ItemsScreen: React.FC = () => {
     const { userId } = useUser(); // get the user id from the contex
     const [items, setItems] = useState<Item[]>([]);
-    useEffect(() => {
-        if (!userId) {
-            return;
-        }
-
-        const fetchItems = async () => {
-            try {
-                const response = await getUserItems(userId);
-                setItems(response);
-            } catch (error) {
-                console.error("Failed to fetch items:", error);
+    useFocusEffect(
+        React.useCallback(() => {
+            if (!userId) {
+                return;
             }
-        };
 
-        fetchItems();
-    }, [userId]);
+            const fetchItems = async () => {
+                try {
+                    const response = await getUserItems(userId);
+                    setItems(response);
+                } catch (error) {
+                    console.error("Failed to fetch items:", error);
+                }
+            };
+
+            fetchItems();
+        }, [userId]) // Only re-run if userId changes
+    );
 
     return (
         <SafeAreaView style={styles.container}>
