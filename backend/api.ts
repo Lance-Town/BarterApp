@@ -438,12 +438,15 @@ export const createPost = async (args: PostProps): Promise<any> => {
 };
 
 export interface Partnership {
-    partnershipId: number;
-    user2Accepted: boolean;
-    requestingItemId: number;
-    requestingAmount: number;
-    offeringItemId: number;
-    offeringAmount: number;
+    post_id: number;
+    partnership_id: number;
+    user2_accepted: boolean;
+    requesting_item_id: number;
+    requesting_amount: number;
+    offering_item_id: number;
+    offering_amount: number;
+    requesting_item_name: string;
+    offering_item_name: string;
 }
 
 // Function to get posts requesting items the user has for sale
@@ -487,5 +490,31 @@ export const getUserPosts = async (
     } catch (error) {
         console.error("Error fetching requested posts", error);
         throw error;
+    }
+};
+
+// Function to accept a post
+export const acceptPost = async (postId: number): Promise<boolean> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/acceptTrade/${postId}`;
+
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Trade acceptance failed");
+        }
+
+        const data = await response.json();
+        console.log("Trade accepted:", data.message);
+        return true;
+    } catch (error) {
+        console.error("Error accepting trade:", error);
+        return false; // Return false in case of an error
     }
 };
