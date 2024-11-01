@@ -518,3 +518,29 @@ export const acceptPost = async (postId: number): Promise<boolean> => {
         return false; // Return false in case of an error
     }
 };
+
+// Function to delete a post and its related partnership entry
+export const deletePost = async (postId: number): Promise<boolean> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/post/${postId}`;
+
+        const response = await fetch(url, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Deleting trade failed");
+        }
+
+        const data = await response.json();
+        console.log("Trade Deleted:", data.message);
+        return true;
+    } catch (error) {
+        console.error("Error deleting trade:", error);
+        return false; // Return false in case of an error
+    }
+};
