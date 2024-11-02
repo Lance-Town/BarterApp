@@ -341,29 +341,24 @@ export const getCategories = async (): Promise<Category[]> => {
     }
 };
 
-export interface Friend {
-    user_id: number;
-    email: string;
-}
+// // route to get all the friends of a user
+// export const getFriends = async (userId: number): Promise<Friend[]> => {
+//     try {
+//         const url = `http://${SERVER_IP}:${SERVER_PORT}/friends/${userId}`;
+//         const response = await fetch(url);
 
-// route to get all the friends of a user
-export const getFriends = async (userId: number): Promise<Friend[]> => {
-    try {
-        const url = `http://${SERVER_IP}:${SERVER_PORT}/friends/${userId}`;
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            throw new Error(
-                `Failed to fetch friends list, status: ${response.status}`
-            );
-        }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error("Error fetching friends:", error);
-        throw error;
-    }
-};
+//         if (!response.ok) {
+//             throw new Error(
+//                 `Failed to fetch friends list, status: ${response.status}`
+//             );
+//         }
+//         const data = await response.json();
+//         return data;
+//     } catch (error) {
+//         console.error("Error fetching friends:", error);
+//         throw error;
+//     }
+// };
 
 // props for creating a post
 export interface PostProps {
@@ -542,5 +537,114 @@ export const deletePost = async (postId: number): Promise<boolean> => {
     } catch (error) {
         console.error("Error deleting trade:", error);
         return false; // Return false in case of an error
+    }
+};
+
+// Function to send a friend request to another user by using their email address
+export const sendFriendRequest = async (userId: number, email: string) => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/addFriend`;
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ requesterId: userId, recieverEmail: email }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+                errorData.message || "Sending friend request failed"
+            );
+        }
+
+        return;
+    } catch (error) {
+        console.error("Error sending friend request", error);
+        throw error;
+    }
+};
+
+// Function to accept or deny a friend request
+export const updateFriendRequest = async (
+    friendId: number,
+    status: string
+): Promise<string> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/updateFriend/${friendId}`;
+        const response = await fetch(url, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ status }),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+                errorData.message || "Updating friend request failed"
+            );
+        }
+
+        const data = await response.json();
+        return data.message;
+    } catch (error) {
+        console.error("Error updating friend request:", error);
+        throw error;
+    }
+};
+
+export interface Friend {
+    email: string;
+    user_id: number;
+}
+
+// Function to all accepted friends of a user
+export const getFriends = async (userId: number): Promise<Friend[]> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/getFriends/${userId}`;
+        const response = await fetch(url);
+
+        const data: Friend[] = await response.json();
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch friends");
+        }
+
+        return data;
+    } catch (error) {
+        console.error("Error fetching friends:", error);
+        throw error;
+    }
+};
+
+export interface FriendRequest {
+    friend_id: number;
+    user_id: number;
+    email: string;
+}
+
+// Function to get all incoming friend requests for a user
+export const getIncomingFriendRequests = async (
+    userId: number
+): Promise<FriendRequest[]> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/incomingFriendRequests/${userId}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+                errorData.message || "Failed to get friend requests"
+            );
+        }
+
+        const data: FriendRequest[] = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching friends:", error);
+        throw error;
     }
 };

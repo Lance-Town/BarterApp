@@ -35,6 +35,9 @@ export default function TabsLayout() {
                         case "trades":
                             iconName = "clock";
                             break;
+                        case "friends":
+                            iconName = "user";
+                            break;
                         default:
                             iconName = "help-circle"; // Fallback icon
                     }
@@ -52,6 +55,7 @@ export default function TabsLayout() {
                 options={{ title: "Transactions" }}
             />
             <Tabs.Screen name="trades" options={{ title: "Trades" }} />
+            <Tabs.Screen name="friends" options={{ title: "Friends" }} />
         </Tabs>
     );
 }

@@ -2,7 +2,16 @@ import React, { useState, useEffect } from "react";
 import { Alert, Image, ImageBackground } from "react-native";
 import { router } from "expo-router";
 import * as eva from "@eva-design/eva";
-import { Layout, ApplicationProvider, useStyleSheet, StyleService, Input, Button, Select, SelectItem } from "@ui-kitten/components";
+import {
+    Layout,
+    ApplicationProvider,
+    useStyleSheet,
+    StyleService,
+    Input,
+    Button,
+    Select,
+    SelectItem,
+} from "@ui-kitten/components";
 import { EvaIconsPack } from "@ui-kitten/eva-icons";
 import { default as customTheme } from "./custom-theme.json"; // <-- Import app theme
 import AppHeader from "@/components/AppHeader";
@@ -54,7 +63,9 @@ const NewItem = () => {
 
             try {
                 const friendsResponse = await getFriends(userId);
+                // console.log(friendsResponse);
                 setFriends(friendsResponse);
+                // console.log(friends);
             } catch (error) {
                 console.error("Error fetching friends:", error);
                 Alert.alert("Error", "Failed to fetch friends");
@@ -142,13 +153,11 @@ const NewItem = () => {
                     style={styles.backgroundImage}
                 >
                     <Layout style={styles.container}>
-                        <Layout style={ styles.header }
-                            level="1"
-                        >
+                        <Layout style={styles.header} level="1">
                             <Button
                                 style={styles.backButton}
                                 appearance="outline"
-                                onPress={() => router.back()} 
+                                onPress={() => router.back()}
                             >
                                 Back
                             </Button>
@@ -172,7 +181,8 @@ const NewItem = () => {
                                 value={categoryId}
                                 onSelect={(index) => {
                                     if (!Array.isArray(index)) {
-                                        const selectedCategory = categories[index.row];
+                                        const selectedCategory =
+                                            categories[index.row];
                                         setCategoryId(
                                             selectedCategory.category_id.toString()
                                         );
@@ -196,12 +206,17 @@ const NewItem = () => {
                                 value={condition}
                                 onSelect={(index) => {
                                     if (!Array.isArray(index)) {
-                                        setCondition(conditions[index.row].value);
+                                        setCondition(
+                                            conditions[index.row].value
+                                        );
                                     }
                                 }}
                             >
                                 {conditions.map((cond) => (
-                                    <SelectItem key={cond.value} title={cond.text} />
+                                    <SelectItem
+                                        key={cond.value}
+                                        title={cond.text}
+                                    />
                                 ))}
                             </Select>
 
@@ -212,14 +227,23 @@ const NewItem = () => {
                                 onSelect={(index) => {
                                     if (!Array.isArray(index)) {
                                         setFriend(
-                                            friends[index.row].user_id.toString()
+                                            friends[
+                                                index.row
+                                            ].user_id.toString()
                                         );
                                     }
                                 }}
                             >
-                                {friends.map((f) => (
-                                    <SelectItem key={f.user_id} title={f.email} />
-                                ))}
+                                {friends.length > 0 ? (
+                                    friends.map((f) => (
+                                        <SelectItem
+                                            key={f.user_id}
+                                            title={f.email}
+                                        />
+                                    ))
+                                ) : (
+                                    <SelectItem title="Loading friends..." />
+                                )}
                             </Select>
                             <Button onPress={handleAddItem}>Add Item</Button>
                         </Layout>
@@ -253,7 +277,7 @@ const themedStyles = StyleService.create({
     logo: {
         width: 100,
         height: 50,
-        marginTop: 20,  // Aligns logo with the top of the back button
+        marginTop: 20, // Aligns logo with the top of the back button
     },
     header: {
         position: "absolute", // Keeps it at the top
