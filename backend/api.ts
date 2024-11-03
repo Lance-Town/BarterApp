@@ -602,12 +602,12 @@ export interface Friend {
 }
 
 // Function to all accepted friends of a user
-export const getFriends = async (userId: number): Promise<Friend[]> => {
+export const getFriends = async (userId: number): Promise<FriendRequest[]> => {
     try {
         const url = `http://${SERVER_IP}:${SERVER_PORT}/getFriends/${userId}`;
         const response = await fetch(url);
 
-        const data: Friend[] = await response.json();
+        const data: FriendRequest[] = await response.json();
 
         if (!response.ok) {
             throw new Error("Failed to fetch friends");
@@ -637,14 +637,91 @@ export const getIncomingFriendRequests = async (
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(
-                errorData.message || "Failed to get friend requests"
+                errorData.message || "Failed to get incoming friend requests"
             );
         }
 
         const data: FriendRequest[] = await response.json();
         return data;
     } catch (error) {
-        console.error("Error fetching friends:", error);
+        console.error("Error fetching incoming friend requests:", error);
+        throw error;
+    }
+};
+
+// Function to get outgoing friend requests for a user
+export const getOutgoingFriendRequests = async (
+    userId: number
+): Promise<FriendRequest[]> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/outgoingFriendRequests/${userId}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+                errorData.message || "Failed to get outgoing friend requests"
+            );
+        }
+
+        const data: FriendRequest[] = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching outgoing friend requests:", error);
+        throw error;
+    }
+};
+
+// Function to delete an entry from friend table
+export const deleteFriend = async (friendId: number): Promise<string> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/deleteFriend/${friendId}`;
+        const response = await fetch(url, {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || "Failed to delete friend");
+        }
+
+        const data = await response.json();
+        return data.message;
+    } catch (error) {
+        console.error("Error deleting friend:", error);
+        throw error;
+    }
+};
+
+export interface Transaction {
+    transaction_id: number;
+    user1_id: number;
+    user1_itemName: string;
+    user1_itemSold: number;
+    user2_id: number;
+    user2_itemName: string;
+    user2_itemSold: number;
+}
+
+export const fetchTransactions = async (
+    userId: number
+): Promise<Transaction[]> => {
+    try {
+        const url = `http://${SERVER_IP}:${SERVER_PORT}/transactions/${userId}`;
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(
+                errorData.message || "Failed to fetch transactions"
+            );
+        }
+
+        const data: Transaction[] = await response.json();
+        return data;
+    } catch (error) {
+        console.error("Error fetching transactions:", error);
         throw error;
     }
 };
