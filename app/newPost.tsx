@@ -86,16 +86,6 @@ const NewPost = () => {
                 console.error("Error, userid can not be null");
                 return;
             }
-            console.log(`
-                NewPost::handleCreatePost::DebugStart
-                user1_id: ${userId}
-                requestingItemId: ${parseInt(requestingItem.item_id)}
-                requestingAmount: ${affordableAmount}
-                offeringItemId: ${parseInt(offeringItem.item_id)}
-                offeringAmount: ${offeringAmount}
-                isNegotiable: 0
-                NewPost::handleCreatePost::DebugEnd
-                `);
             await createPost({
                 user1_id: userId,
                 requestingItemId: parseInt(requestingItem.item_id),
