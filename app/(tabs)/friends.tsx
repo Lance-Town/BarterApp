@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import {
     SafeAreaView,
+    ScrollView,
     Alert,
     StyleSheet,
     Modal,
@@ -13,18 +14,23 @@ import { useUser } from "@/hooks/UserContext";
 import {
     getFriends,
     getIncomingFriendRequests,
-    sendFriendRequest, // Import sendFriendRequest function if it exists
+    sendFriendRequest,
     Friend,
     FriendRequest,
     acceptPost,
     updateFriendRequest,
+    getOutgoingFriendRequests,
+    deleteFriend,
 } from "@/backend/api";
 import { useFocusEffect } from "expo-router";
 
 const FriendsScreen = () => {
     const { userId } = useUser();
-    const [friends, setFriends] = useState<Friend[]>([]);
+    const [friends, setFriends] = useState<FriendRequest[]>([]);
     const [incomingRequests, setIncomingRequests] = useState<FriendRequest[]>(
+        []
+    );
+    const [outgoingRequests, setOutgoingRequests] = useState<FriendRequest[]>(
         []
     );
     const [isModalVisible, setModalVisible] = useState(false);
@@ -58,10 +64,25 @@ const FriendsScreen = () => {
         }
     };
 
+    // Fetch outgoing friend requests
+    const fetchOutgoingRequests = async () => {
+        if (!userId) {
+            console.error("User ID is NULL");
+            return;
+        }
+        try {
+            const data = await getOutgoingFriendRequests(userId);
+            setOutgoingRequests(data);
+        } catch (error) {
+            console.error("Failed to fetch outgoing friend requests", error);
+        }
+    };
+
     useFocusEffect(
         useCallback(() => {
             fetchUserFriends();
             fetchIncomingRequests();
+            fetchOutgoingRequests();
         }, [userId])
     );
 
@@ -72,10 +93,11 @@ const FriendsScreen = () => {
             return;
         }
         try {
-            await sendFriendRequest(userId, emailInput); // Adjust API call as needed
+            await sendFriendRequest(userId, emailInput);
             Alert.alert("Success", "Friend request sent");
             setModalVisible(false);
             setEmailInput("");
+            fetchOutgoingRequests();
         } catch (error) {
             console.error("Failed to send friend request", error);
             Alert.alert("Error", "Failed to send friend request");
@@ -92,12 +114,12 @@ const FriendsScreen = () => {
         }
 
         try {
-            const success: string = await updateFriendRequest(
+            const message: string = await updateFriendRequest(
                 friendId,
                 didAcceptRequest ? "Accepted" : "Blocked"
             );
 
-            Alert.alert("Success", success);
+            Alert.alert("Success", message);
 
             fetchUserFriends();
             fetchIncomingRequests();
@@ -117,6 +139,23 @@ const FriendsScreen = () => {
         }
     };
 
+    const handleDeleteFriendRequest = async (friendId: number) => {
+        if (!userId) {
+            console.error("User ID can not be null");
+            return;
+        }
+
+        try {
+            const message: string = await deleteFriend(friendId);
+
+            Alert.alert("Success", message);
+            fetchUserFriends();
+            fetchOutgoingRequests();
+        } catch (error) {
+            console.error("Failed to delete friend request", error);
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <AppHeader />
@@ -128,45 +167,85 @@ const FriendsScreen = () => {
             </Button>
             <Divider />
 
-            <Text style={styles.title}>Your Friends</Text>
-            {friends.length > 0 ? (
-                friends.map((friend) => (
-                    <Card key={friend.user_id} style={styles.friendCard}>
-                        <Text style={styles.text}>{friend.email}</Text>
-                    </Card>
-                ))
-            ) : (
-                <Text style={styles.noFriendsText}>No friends added</Text>
-            )}
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <Text style={styles.title}>Your Friends</Text>
+                {friends.length > 0 ? (
+                    friends.map((friend) => (
+                        <Card key={friend.user_id} style={styles.friendCard}>
+                            <Text style={styles.text}>{friend.email}</Text>
+                            <Button
+                                status="danger"
+                                onPress={() =>
+                                    handleDeleteFriendRequest(friend.friend_id)
+                                }
+                            >
+                                Delete
+                            </Button>
+                        </Card>
+                    ))
+                ) : (
+                    <Text style={styles.noFriendsText}>No friends added</Text>
+                )}
 
-            <Text style={styles.title}>Incoming Friend Requests</Text>
-            {incomingRequests.length > 0 ? (
-                incomingRequests.map((request) => (
-                    <Card key={request.friend_id} style={styles.requestCard}>
-                        <Text style={styles.text}>{request.email}</Text>
-                        <Button
-                            status="success"
-                            onPress={() =>
-                                handleFriendRequest(request.friend_id, true)
-                            }
+                <Text style={styles.title}>Incoming Friend Requests</Text>
+                {incomingRequests.length > 0 ? (
+                    incomingRequests.map((request) => (
+                        <Card
+                            key={request.friend_id}
+                            style={styles.requestCard}
                         >
-                            Accept
-                        </Button>
-                        <Button
-                            status="danger"
-                            onPress={() =>
-                                handleFriendRequest(request.friend_id, false)
-                            }
+                            <Text style={styles.text}>{request.email}</Text>
+                            <Button
+                                status="success"
+                                onPress={() =>
+                                    handleFriendRequest(request.friend_id, true)
+                                }
+                            >
+                                Accept
+                            </Button>
+                            <Button
+                                status="danger"
+                                onPress={() =>
+                                    handleFriendRequest(
+                                        request.friend_id,
+                                        false
+                                    )
+                                }
+                            >
+                                Deny
+                            </Button>
+                        </Card>
+                    ))
+                ) : (
+                    <Text style={styles.noRequestsText}>
+                        No incoming friend requests
+                    </Text>
+                )}
+
+                <Text style={styles.title}>Outgoing Friend Requests</Text>
+                {outgoingRequests.length > 0 ? (
+                    outgoingRequests.map((request) => (
+                        <Card
+                            key={request.friend_id}
+                            style={styles.requestCard}
                         >
-                            Deny
-                        </Button>
-                    </Card>
-                ))
-            ) : (
-                <Text style={styles.noRequestsText}>
-                    No incoming friend requests
-                </Text>
-            )}
+                            <Text style={styles.text}>{request.email}</Text>
+                            <Button
+                                status="danger"
+                                onPress={() =>
+                                    handleDeleteFriendRequest(request.friend_id)
+                                }
+                            >
+                                Delete
+                            </Button>
+                        </Card>
+                    ))
+                ) : (
+                    <Text style={styles.noRequestsText}>
+                        No outgoing friend requests
+                    </Text>
+                )}
+            </ScrollView>
 
             {/* Modal for sending friend request */}
             <Modal
@@ -209,6 +288,10 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         backgroundColor: "#292929",
+    },
+    scrollContainer: {
+        paddingHorizontal: 16,
+        paddingBottom: 20,
     },
     addButton: {
         marginTop: 10,
