@@ -41,7 +41,7 @@ const HomeScreen: React.FC = () => {
 
     const handleViewAllOfferings = () => {
         // Logic for viewing all offerings
-        console.log("View All Offerings");
+        router.push("../allItems");
     };
 
     const handleMakeTrade = () => {
