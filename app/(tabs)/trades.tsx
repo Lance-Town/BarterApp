@@ -57,6 +57,7 @@ const TradesScreen = () => {
         const success = await acceptPost(postId);
         if (success) {
             Alert.alert("Success", "Trade was completed");
+            fetchRequestedPosts();
         } else {
             console.error("Error: Trade was NOT accepted");
         }
