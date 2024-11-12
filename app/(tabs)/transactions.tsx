@@ -87,7 +87,8 @@ const themedStyles = StyleService.create({
         borderColor: "#ddd",
     },
     transactionText: {
-        fontSize: 16,
+        fontSize: 18,
+        fontWeight: "bold",
         color: "#f8f8f8",
     },
     noHistoryText: {

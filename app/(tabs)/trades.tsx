@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from "react";
 import { SafeAreaView, Alert, View, StyleSheet } from "react-native";
-import { Divider, Text, Button, Card } from "@ui-kitten/components";
+import { Divider, Text, Button, Card, Layout, ApplicationProvider } from "@ui-kitten/components";
 import AppHeader from "@/components/AppHeader";
-import { useUser } from "@/hooks/UserContext";
+import * as eva from "@eva-design/eva";
+import { useUser, UserProvider } from "@/hooks/UserContext";
 import {
     getRequestedPosts,
     Partnership,
@@ -11,6 +12,8 @@ import {
     deletePost,
 } from "@/backend/api";
 import { useFocusEffect } from "expo-router";
+import { default as customTheme } from "../custom-theme.json"; // <-- Import app theme
+
 
 const TradesScreen = () => {
     const { userId } = useUser();
@@ -82,67 +85,74 @@ const TradesScreen = () => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <AppHeader />
-            <Divider />
-            <Text style={styles.title}>Requested Trades</Text>
-            {trades.length > 0 ? (
-                trades.map((trade) => (
-                    <Card key={trade.post_id} style={styles.tradeCard}>
-                        <Text style={styles.text}>
-                            Requesting: {trade.requesting_amount} x{" "}
-                            {trade.requesting_item_name}
-                        </Text>
-                        <Text style={styles.text}>
-                            Offering: {trade.offering_amount} x{" "}
-                            {trade.offering_item_name}
-                        </Text>
-                        <View style={styles.buttonContainer}>
-                            <Button
-                                style={styles.button}
-                                status="success"
-                                onPress={() => handleAccept(trade.post_id)}
-                            >
-                                Accept
-                            </Button>
-                            <Button
-                                style={styles.button}
-                                status="danger"
-                                onPress={() => handleDeny(trade.post_id, false)}
-                            >
-                                Deny
-                            </Button>
-                        </View>
-                    </Card>
-                ))
-            ) : (
-                <Text style={styles.noTradesText}>No trades available</Text>
-            )}
-            <Text style={styles.title}>Your Offers</Text>
-            {userTrades.length > 0 ? (
-                userTrades.map((trade) => (
-                    <Card key={trade.post_id} style={styles.tradeCard}>
-                        <Text style={styles.text}>
-                            Requesting: {trade.requesting_amount} x{" "}
-                            {trade.requesting_item_name}
-                        </Text>
-                        <Text style={styles.text}>
-                            Offering: {trade.offering_amount} x{" "}
-                            {trade.offering_item_name}
-                        </Text>
-                        <Button
-                            style={styles.button}
-                            status="danger"
-                            onPress={() => handleDeny(trade.post_id, true)}
-                        >
-                            Delete
-                        </Button>
-                    </Card>
-                ))
-            ) : (
-                <Text style={styles.noTradesText}>No offers made</Text>
-            )}
-        </SafeAreaView>
+        <UserProvider>
+            <ApplicationProvider
+                {...eva}
+                theme={{ ...eva.dark, ...customTheme }}
+            >
+                <SafeAreaView style={styles.container}>
+                    <AppHeader />
+                    <Divider />
+                    <Text style={styles.title}>Requested Trades</Text>
+                    {trades.length > 0 ? (
+                        trades.map((trade) => (
+                            <Card key={trade.post_id} style={styles.tradeCard}>
+                                <Text style={styles.text}>
+                                    Requesting: {trade.requesting_amount} x{" "}
+                                    {trade.requesting_item_name}
+                                </Text>
+                                <Text style={styles.text}>
+                                    Offering: {trade.offering_amount} x{" "}
+                                    {trade.offering_item_name}
+                                </Text>
+                                <View style={styles.buttonContainer}>
+                                    <Button
+                                        style={styles.button}
+                                        status="success"
+                                        onPress={() => handleAccept(trade.post_id)}
+                                    >
+                                        Accept
+                                    </Button>
+                                    <Button
+                                        style={styles.button}
+                                        status="danger"
+                                        onPress={() => handleDeny(trade.post_id, false)}
+                                    >
+                                        Deny
+                                    </Button>
+                                </View>
+                            </Card>
+                        ))
+                    ) : (
+                        <Text style={styles.noTradesText}>No trades available</Text>
+                    )}
+                    <Text style={styles.title}>Your Offers</Text>
+                    {userTrades.length > 0 ? (
+                        userTrades.map((trade) => (
+                            <Card key={trade.post_id} style={styles.tradeCard}>
+                                <Text style={styles.text}>
+                                    Requesting: {trade.requesting_amount} x{" "}
+                                    {trade.requesting_item_name}
+                                </Text>
+                                <Text style={styles.text}>
+                                    Offering: {trade.offering_amount} x{" "}
+                                    {trade.offering_item_name}
+                                </Text>
+                                <Button
+                                    style={styles.button}
+                                    status="danger"
+                                    onPress={() => handleDeny(trade.post_id, true)}
+                                >
+                                    Delete
+                                </Button>
+                            </Card>
+                        ))
+                    ) : (
+                        <Text style={styles.noTradesText}>No offers made</Text>
+                    )}
+                </SafeAreaView>
+            </ApplicationProvider>
+        </UserProvider>
     );
 };
 
@@ -155,7 +165,8 @@ const styles = StyleSheet.create({
     title: {
         color: "#ffffff",
         fontSize: 18,
-        marginVertical: 20,
+        marginTop: 20,
+        fontWeight: "bold",
     },
     tradeCard: {
         width: "90%",
@@ -167,6 +178,7 @@ const styles = StyleSheet.create({
     text: {
         color: "#ffffff",
         fontSize: 16,
+        
     },
     buttonContainer: {
         flexDirection: "row",

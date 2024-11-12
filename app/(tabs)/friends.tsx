@@ -8,9 +8,10 @@ import {
     View,
     TextInput,
 } from "react-native";
-import { Divider, Text, Button, Card } from "@ui-kitten/components";
+import * as eva from "@eva-design/eva";
+import { Divider, Text, Button, Card, ApplicationProvider, Layout } from "@ui-kitten/components";
 import AppHeader from "@/components/AppHeader";
-import { useUser } from "@/hooks/UserContext";
+import { useUser, UserProvider } from "@/hooks/UserContext";
 import {
     getFriends,
     getIncomingFriendRequests,
@@ -23,6 +24,8 @@ import {
     deleteFriend,
 } from "@/backend/api";
 import { useFocusEffect } from "expo-router";
+import { default as customTheme } from "../custom-theme.json"; // <-- Import app theme
+
 
 const FriendsScreen = () => {
     const { userId } = useUser();
@@ -157,129 +160,140 @@ const FriendsScreen = () => {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
-            <AppHeader />
-            <Button
-                style={styles.addButton}
-                onPress={() => setModalVisible(true)}
+        <UserProvider>
+            <ApplicationProvider
+                {...eva}
+                theme={{ ...eva.dark, ...customTheme }}
             >
-                Add Friend
-            </Button>
-            <Divider />
+                <SafeAreaView style={styles.container}>
+                    <AppHeader />
+                    <Button
+                        style={styles.addButton}
+                        onPress={() => setModalVisible(true)}
+                    >
+                        Add Friend
+                    </Button>
+                    <Divider />
 
-            <ScrollView contentContainerStyle={styles.scrollContainer}>
-                <Text style={styles.title}>Your Friends</Text>
-                {friends.length > 0 ? (
-                    friends.map((friend) => (
-                        <Card key={friend.user_id} style={styles.friendCard}>
-                            <Text style={styles.text}>{friend.email}</Text>
-                            <Button
-                                status="danger"
-                                onPress={() =>
-                                    handleDeleteFriendRequest(friend.friend_id)
-                                }
-                            >
-                                Delete
-                            </Button>
-                        </Card>
-                    ))
-                ) : (
-                    <Text style={styles.noFriendsText}>No friends added</Text>
-                )}
+                    <ScrollView contentContainerStyle={styles.scrollContainer}>
+                        <Text style={styles.title}>Your Friends</Text>
+                        {friends.length > 0 ? (
+                            friends.map((friend) => (
+                                <Card key={friend.user_id} style={styles.friendCard}>
+                                    <Layout style={styles.row} level="1">
+                                        <Text style={styles.text}>{friend.email}</Text>
+                                        <Button
+                                            status="danger"
+                                            size='small'
+                                            style={{width: 80, alignSelf: 'flex-end'}}
+                                            onPress={() =>
+                                                handleDeleteFriendRequest(friend.friend_id)
+                                            }
+                                        >
+                                            Delete
+                                        </Button>
+                                    </Layout>
+                                </Card>
+                            ))
+                        ) : (
+                            <Text style={styles.noFriendsText}>No friends added</Text>
+                        )}
 
-                <Text style={styles.title}>Incoming Friend Requests</Text>
-                {incomingRequests.length > 0 ? (
-                    incomingRequests.map((request) => (
-                        <Card
-                            key={request.friend_id}
-                            style={styles.requestCard}
-                        >
-                            <Text style={styles.text}>{request.email}</Text>
-                            <Button
-                                status="success"
-                                onPress={() =>
-                                    handleFriendRequest(request.friend_id, true)
-                                }
-                            >
-                                Accept
-                            </Button>
-                            <Button
-                                status="danger"
-                                onPress={() =>
-                                    handleFriendRequest(
-                                        request.friend_id,
-                                        false
-                                    )
-                                }
-                            >
-                                Deny
-                            </Button>
-                        </Card>
-                    ))
-                ) : (
-                    <Text style={styles.noRequestsText}>
-                        No incoming friend requests
-                    </Text>
-                )}
+                        <Text style={styles.title}>Incoming Friend Requests</Text>
+                        {incomingRequests.length > 0 ? (
+                            incomingRequests.map((request) => (
+                                <Card
+                                    key={request.friend_id}
+                                    style={styles.requestCard}
+                                >
+                                    <Text style={styles.text}>{request.email}</Text>
+                                    <Button
+                                        status="success"
+                                        onPress={() =>
+                                            handleFriendRequest(request.friend_id, true)
+                                        }
+                                    >
+                                        Accept
+                                    </Button>
+                                    <Button
+                                        status="danger"
+                                        onPress={() =>
+                                            handleFriendRequest(
+                                                request.friend_id,
+                                                false
+                                            )
+                                        }
+                                    >
+                                        Deny
+                                    </Button>
+                                </Card>
+                            ))
+                        ) : (
+                            <Text style={styles.noRequestsText}>
+                                No incoming friend requests
+                            </Text>
+                        )}
 
-                <Text style={styles.title}>Outgoing Friend Requests</Text>
-                {outgoingRequests.length > 0 ? (
-                    outgoingRequests.map((request) => (
-                        <Card
-                            key={request.friend_id}
-                            style={styles.requestCard}
-                        >
-                            <Text style={styles.text}>{request.email}</Text>
-                            <Button
-                                status="danger"
-                                onPress={() =>
-                                    handleDeleteFriendRequest(request.friend_id)
-                                }
-                            >
-                                Delete
-                            </Button>
-                        </Card>
-                    ))
-                ) : (
-                    <Text style={styles.noRequestsText}>
-                        No outgoing friend requests
-                    </Text>
-                )}
-            </ScrollView>
+                        <Text style={styles.title}>Outgoing Friend Requests</Text>
+                        {outgoingRequests.length > 0 ? (
+                            outgoingRequests.map((request) => (
+                                <Card
+                                    key={request.friend_id}
+                                    style={styles.requestCard}
+                                >
+                                    <Text style={styles.text}>{request.email}</Text>
+                                    <Button
+                                        status="danger"
+                                        onPress={() =>
+                                            handleDeleteFriendRequest(request.friend_id)
+                                        }
+                                    >
+                                        Delete
+                                    </Button>
+                                </Card>
+                            ))
+                        ) : (
+                            <Text style={styles.noRequestsText}>
+                                No outgoing friend requests
+                            </Text>
+                        )}
+                    </ScrollView>
 
-            {/* Modal for sending friend request */}
-            <Modal
-                visible={isModalVisible}
-                animationType="slide"
-                transparent={true}
-                onRequestClose={() => setModalVisible(false)}
-            >
-                <View style={styles.modalContainer}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>
-                            Send Friend Request
-                        </Text>
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Enter email"
-                            placeholderTextColor="#888"
-                            value={emailInput}
-                            onChangeText={setEmailInput}
-                        />
-                        <Button onPress={handleSendRequest}>
-                            Send Request
-                        </Button>
-                        <Button
-                            status="danger"
-                            onPress={() => setModalVisible(false)}
-                            style={styles.cancelButton}
-                        >
-                            Cancel
-                        </Button>
-                    </View>
-                </View>
-            </Modal>
-        </SafeAreaView>
+                    {/* Modal for sending friend request */}
+                    <Modal
+                        visible={isModalVisible}
+                        animationType="slide"
+                        transparent={true}
+                        onRequestClose={() => setModalVisible(false)}
+                    >
+                        <View style={styles.modalContainer}>
+                            <View style={styles.modalContent}>
+                                <Text style={styles.modalTitle}>
+                                    Send Friend Request
+                                </Text>
+                                <TextInput
+                                    style={styles.input}
+                                    placeholder="Enter email"
+                                    placeholderTextColor="#888"
+                                    value={emailInput}
+                                    onChangeText={setEmailInput}
+                                />
+                                <Button onPress={handleSendRequest}>
+                                    Send Request
+                                </Button>
+                                <Button
+                                    status="danger"
+                                    onPress={() => setModalVisible(false)}
+                                    style={styles.cancelButton}
+                                >
+                                    Cancel
+                                </Button>
+                            </View>
+                        </View>
+                    </Modal>
+                </SafeAreaView>
+            </ApplicationProvider>
+        </UserProvider>
     );
 };
 
@@ -298,9 +312,10 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     title: {
-        color: "#ffffff",
         fontSize: 18,
-        marginVertical: 20,
+        fontWeight: "bold",
+        color: "#f8f8f8",
+        marginTop: 16,
     },
     friendCard: {
         width: "90%",
@@ -356,6 +371,15 @@ const styles = StyleSheet.create({
     },
     cancelButton: {
         marginTop: 10,
+    },
+    row: {
+        top: 0,
+        left: 0,
+        right: 0,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        backgroundColor: "transparent",
     },
 });
 
