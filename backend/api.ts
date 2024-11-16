@@ -341,25 +341,6 @@ export const getCategories = async (): Promise<Category[]> => {
     }
 };
 
-// // route to get all the friends of a user
-// export const getFriends = async (userId: number): Promise<Friend[]> => {
-//     try {
-//         const url = `http://${SERVER_IP}:${SERVER_PORT}/friends/${userId}`;
-//         const response = await fetch(url);
-
-//         if (!response.ok) {
-//             throw new Error(
-//                 `Failed to fetch friends list, status: ${response.status}`
-//             );
-//         }
-//         const data = await response.json();
-//         return data;
-//     } catch (error) {
-//         console.error("Error fetching friends:", error);
-//         throw error;
-//     }
-// };
-
 // props for creating a post
 export interface PostProps {
     user1_id: number;
@@ -389,18 +370,6 @@ export const createPost = async (args: PostProps): Promise<any> => {
         const hashcode = generateHashCode(args.requestingItemId);
         const url = `http://${SERVER_IP}:${SERVER_PORT}/postpartnership`;
 
-        console.log(`
-            api::createPost::DebugStart
-            user1_id: ${args.user1_id}  
-            requestingItemId: ${args.requestingItemId}
-            requestingAmount: ${args.requestingAmount}
-            offeringItemId: ${args.offeringItemId}
-            offeringAmount: ${args.offeringAmount}
-            isNegotiable: ${args.isNegotiable}
-            hashcode: ${hashcode}
-            api::createPost::DebugEnd
-            `);
-
         const response = await fetch(url, {
             method: "POST",
             headers: {
@@ -411,14 +380,6 @@ export const createPost = async (args: PostProps): Promise<any> => {
                 hashcode, // Include the generated hash code in the request body
             }),
         });
-
-        console.log(`
-            api::createPost::DebugStart2
-            response.ok: ${response.ok}
-            response.status: ${response.status}
-            response.headers: ${response.headers}
-            api::createPost::DebugEnd2
-            `);
 
         if (!response.ok) {
             throw new Error(`Error creating post, status: ${response.status}`);
