@@ -23,7 +23,7 @@ import {
     getOutgoingFriendRequests,
     deleteFriend,
 } from "@/backend/api";
-import { useFocusEffect } from "expo-router";
+import { useFocusEffect, router } from "expo-router";
 import { default as customTheme } from "../custom-theme.json"; // <-- Import app theme
 
 
@@ -159,6 +159,11 @@ const FriendsScreen = () => {
         }
     };
 
+    const signOut = () => {
+        // sign out user by routing to index
+        router.push("/");
+    };
+
     return (
         <UserProvider>
             <ApplicationProvider
@@ -258,6 +263,14 @@ const FriendsScreen = () => {
                             </Text>
                         )}
                     </ScrollView>
+
+                    <Button
+                        style={styles.addButton}
+                        appearance="outline"
+                        onPress={signOut}
+                    >
+                        Sign Out
+                    </Button>
 
                     {/* Modal for sending friend request */}
                     <Modal
